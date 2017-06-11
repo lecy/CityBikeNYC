@@ -4,20 +4,21 @@ This folder contains usage statistics for one month of the NYC Citybike bike sha
 
 # Data Dictionary
 
-•	Trip Duration (seconds)
-•	Start Time and Date
-•	Stop Time and Date
-•	Start Station Name
-•	End Station Name
-•	Station ID
-•	Station Lat/Long
-•	Bike ID
-•	User Type (Customer = 24-hour pass or 7-day pass user; Subscriber = Annual Member)
-•	Gender (Zero=unknown; 1=male; 2=female)
-•	Year of Birth
+•	Trip Duration (seconds)  
+•	Start Time and Date  
+•	Stop Time and Date  
+•	Start Station Name  
+•	End Station Name  
+•	Station ID  
+•	Station Lat/Long  
+•	Bike ID  
+•	User Type (Customer = 24-hour pass or 7-day pass user; Subscriber = Annual Member)  
+•	Gender (Zero=unknown; 1=male; 2=female)  
+•	Year of Birth  
 
 
 # Load Data
 
+```r
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
-
+```
