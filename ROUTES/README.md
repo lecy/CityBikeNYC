@@ -19,8 +19,9 @@ rt <- route( from="40.75002,-73.96905",
 
 nyc <- qmap( "New York City, NY", color='bw', zoom=13 )  
 
-nyc +  geom_path(  aes( x = rt$startLon , y = rt$startLat ), 
+nyc +  geom_path(  aes( x = rt$lon , y = rt$lat ), 
             colour="#1E2B6A", data=rt, alpha=1, size=2 )
+
 
 
 > rt
