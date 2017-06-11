@@ -48,11 +48,11 @@ nyc +  geom_path(  aes( x = rt$lon , y = rt$lat ),
 
 **Google credentialing**:  https://github.com/dkahle/ggmap
 
-If you have a Google API key, you can exceed the standard limits Google places on queries. 
+If you have a Google API key, you can exceed the standard limits Google places on queries (currently 2,500 a day). 
 
 https://developers.google.com/maps/web-services/
 
-The cost is currently $0.50 for 1,000 queries for geocoding or routes.
+The cost is currently $0.50 for 1,000 queries for calls geocoding or routes.
 
 By default, when ggmap is loaded it will set the following credentials and limits:
 
