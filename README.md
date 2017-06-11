@@ -17,4 +17,4 @@ https://www.visualcinnamon.com/2014/03/running-paths-in-amsterdam-step-2.html
 
 ![alt](ASSETS/copenhagen.png)
 
-[![IMAGE ALT TEXT HERE](https://www.youtube.com/watch?v=nZx8QLXk3Ls/0.jpg)](https://www.youtube.com/watch?v=nZx8QLXk3Ls)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/nZx8QLXk3Ls/0.jpg)](https://www.youtube.com/watch?v=nZx8QLXk3Ls)
