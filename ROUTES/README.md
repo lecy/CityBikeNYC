@@ -12,8 +12,8 @@ The database in this folder contains coordinates and travel time for all possibl
 
 library( ggmap )
 
-rt <- route( from="40.75002,-73.96905", 
-             to="40.72229,-73.99148", 
+rt <- route( from=c(-73.96905,40.75002), 
+             to=c(-73.99148,40.72229), 
              mode="bicycling",
              structure="route" )
 
@@ -24,7 +24,9 @@ nyc +  geom_path(  aes( x = rt$lon , y = rt$lat ),
 
 
 
-> rt
+
+
+rt
      m    km     miles seconds    minutes       hours leg       lon      lat
 1   96 0.096 0.0596544      12  0.2000000 0.003333333   1 -73.96898 40.74999
 2  228 0.228 0.1416792      83  1.3833333 0.023055556   2 -73.96842 40.75075
