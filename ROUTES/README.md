@@ -39,3 +39,47 @@ nyc +  geom_path(  aes( x = rt$lon , y = rt$lat ),
 ```
 
 ![alt](../ASSETS/route.png)
+
+
+
+
+
+# Large Numbers of Route Queries
+
+**Google credentialing**:  https://github.com/dkahle/ggmap
+
+If you have a Google API key, you can exceed the standard limits Google places on queries. 
+
+https://developers.google.com/maps/web-services/
+
+The cost is currently $0.50 for 1,000 queries for geocoding or routes.
+
+By default, when ggmap is loaded it will set the following credentials and limits:
+
+```r
+ggmap_credentials()
+#  Google - 
+#     key :  
+#     account_type : standard 
+#     day_limit : 2500 
+#     second_limit : 50 
+#     client :  
+#     signature :
+
+```
+
+Look at the documentation of ?register_google() to learn more. If you do have an API key, you set it with:
+
+```r
+
+register_google(key = "[your key here]", account_type = "premium", day_limit = 100000)
+ggmap_credentials()
+#  Google - 
+#     key : [your key here] 
+#     account_type : premium 
+#     day_limit : 1e+05 
+#     second_limit : 50 
+#     client :  
+#     signature :
+
+```
