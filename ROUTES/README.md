@@ -37,4 +37,4 @@ nyc +  geom_path(  aes( x = rt$startLon , y = rt$startLat ),
 
 ```
 
-![alt](ASSETS/route.png)
+![alt](../ASSETS/route.png)
