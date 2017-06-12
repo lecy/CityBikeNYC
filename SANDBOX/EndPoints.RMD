@@ -3,7 +3,6 @@ title: "Mapping NYC Citi Bike Routes"
 output:
   html_document:
     keep_md: true
-    df_print: paged
     theme: cerulean
     highlight: haddock
 ---
@@ -93,7 +92,7 @@ bikes.merged1 <- bikes.merged %>%
 
 
 
-unique(bikes.merged1)
+# unique(bikes.merged1)
 # ID     n
 # <chr> <int>
 # 1  116-116   400
