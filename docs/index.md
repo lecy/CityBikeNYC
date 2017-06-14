@@ -25,3 +25,5 @@ Here is what a link looks like:
 And the live link:
 
 [Link to html file](Bikes_Markdown.html)
+
+As you can see, this file does contain the output to the code. This is called a "data-driven document" because you can include the code and output together to make analysis easier to understand, audit, and reproduce.
