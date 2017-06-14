@@ -38,11 +38,15 @@ Min.   :0.0000   Min.   :0.0000   Min.   :3.000   Min.   :1.000
 Median :0.0000   Median :0.0000   Median :4.000   Median :2.000  
 Mean   :0.4375   Mean   :0.4062   Mean   :3.688   Mean   :2.812  
 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000  
+<<<<<<< HEAD
 Max.   :1.0000   Max.   :1.0000   Max.   :5.000   Max.   :8.000  
 
 
 tetststststststss
 
 colnames(mtcars)
-> colnames(mtcars)
-[1] "mpg"  "cyl"  "disp" "hp"   "drat" "wt"   "qsec" "vs"   "am"   "gear" "carb"
+
+clkd;vlndfv;ljqdfnv;qdjlvnqdf;jvdfq;vjbsfd;kjvbf
+csdmc sdn sd.kjd fv;kjsdf 
+dcksdnc sd.mc skvj dflkvj dfkjv
+dsckjd ckqljvblfqkv fjlhv dfjlhvdf hjld
