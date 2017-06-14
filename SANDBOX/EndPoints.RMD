@@ -21,6 +21,7 @@ library( dplyr )
 library( ggmap )
 library( tibble )
 
+
 ```
 
 
@@ -144,7 +145,7 @@ bikes2 <- stations %>%
   summarise(n = n())
 
 
-# A tibble: 44,073 × 2
+# A tibble: 44,073 ? 2
 # ID     n
 # <chr> <int>
 #  1  116-116    20
