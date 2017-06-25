@@ -167,3 +167,179 @@ head(table(table(stations$ID)), 10)
 
 ```
 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+**Here I will do some analysis of data for NYC Citi Bike in January 2015**
+
+```{r bikes, warning=FALSE, message=FALSE}
+
+# Packages
+library(ggmap)
+library(ggplot2)
+library(tidyverse)
+library(readr)
+library(ggthemes)
+library(lubridate)
+library(gridExtra)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(mapproj)
+library(leaflet)
+```
+
+```{r warning=FALSE, message=FALSE}
+# Set directory
+setwd("C:/DC/Data Driven Management/Independent Study")
+bikes <- readRDS("bikes.rds") # read file
+str(bikes) # 285552 obs. of  18 variables in our file structure
+names(bikes) # check names of columns
+
+# [1] "tripduration"            "starttime"               "stoptime"                "start.station.id"       
+# [5] "start.station.name"      "start.station.latitude"  "start.station.longitude" "end.station.id"         
+# [9] "end.station.name"        "end.station.latitude"    "end.station.longitude"   "bikeid"                 
+# [13] "usertype"                "birth.year"              "gender"                  "ID"     
+
+# Cleaning data
+bikes$starttime <- as.POSIXct(strptime(bikes$starttime, format = "%m/%d/%Y %H:%M"))
+bikes$stoptime <- as.POSIXct(strptime(bikes$stoptime, format = "%m/%d/%Y %H:%M"))
+# bikes$gender[bikes$gender == ""] <- NA
+# bikes$gender <- factor(bikes$gender)
+bikes$usertype[bikes$usertype == ""] <- NA
+# bikes$usertype[bikes$usertype == "Short-Term Pass Holder"] <- "Pass-Holder"
+bikes$usertype <- factor(bikes$usertype)
+# Extracting day of the month and hour time when trip starts
+bikes$startday <- as.integer(format(bikes$starttime, "%d"))
+bikes$starthour <- as.integer(format(bikes$starttime, "%H"))
+```
+
+
+####Plots 
+
+**Here we see how different types of riders - customers and subscribers used bikes in January per day, per hour and their trip duration. Similar stuff (but for gender I did for my IST 719 Class Information Visualization)**
+
+
+```{r pressure, echo=TRUE, warning=FALSE, message=FALSE}
+# Plots 
+# Here we see how different types of riders - customers and subscribers used bikes in January 
+# per day, per hour and their trip duration.
+# Similar stuff (but for gender I did for my IST 719 Class Information Visualization)
+
+# Rides per day
+ggplot(data = bikes, aes(x = startday, fill = usertype)) + geom_histogram(
+  binwidth = 1, color = "black", alpha = 0.8) + labs(x = "Date of the month", y = "Trip Count") + 
+  scale_x_continuous(breaks = seq(1,31,1)) +
+  labs(title = "Bike rides per day and by user in January 2015",
+       subtitle = "Source: NYC Citi Bike") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(x = "Day of Month", 
+       y = "Number of rides") +
+  scale_color_fivethirtyeight() +
+  theme_fivethirtyeight() +
+  theme(axis.line.x = element_line(size = .5, colour = "black"),
+        axis.title = element_text(size = 12),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.box = "vertical",
+        legend.key.size = unit(0.7, "cm"),
+        legend.text = element_text(size = 10),
+        text = element_text(family = "OfficinaSanITC-Book"),
+        plot.title = element_text(family = "OfficinaSanITC-Book")) +
+  theme(legend.title=element_blank()) + 
+  scale_fill_manual(values = c("darkorange", "dodgerblue4")) 
+
+# Rides per month
+ggplot(data = bikes, aes(x = starthour, fill = usertype)) + geom_histogram(
+  binwidth = 1, color = "black", alpha = 0.8) + labs(x = "Hour of the day", y = "Trip Count") + 
+  scale_x_continuous(breaks = seq(0,24,1)) +
+  labs(title = "Bike rides per hour and by user in January 2015",
+       subtitle = "Source: NYC Citi Bike") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(x = "Hour", 
+       y = "Number of rides") +
+  scale_color_fivethirtyeight() +
+  theme_fivethirtyeight() +
+  theme(axis.line.x = element_line(size = .5, colour = "black"),
+        axis.title = element_text(size = 12),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.box = "vertical",
+        legend.key.size = unit(0.7, "cm"),
+        legend.text = element_text(size = 10),
+        text = element_text(family = "OfficinaSanITC-Book"),
+        plot.title = element_text(family = "OfficinaSanITC-Book")) +
+  theme(legend.title=element_blank()) + 
+  scale_fill_manual(values = c("darkorange", "dodgerblue4")) 
+
+# Trip duration of rides
+ggplot(data = subset(bikes, bikes$tripduration < quantile(bikes$tripduration, 0.95)),
+       aes(x = tripduration/60, fill = usertype)) +
+  geom_histogram(binwidth = 0.5, color = "black", alpha = 0.8) + 
+  labs(x = "Trip Duration(in minutes)", y = "Number of rides") +
+  scale_x_continuous(breaks = seq(1,100,1)) +
+  labs(title = "Trip duration by user in January 2015",
+       subtitle = "Source: NYC Citi Bike") +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(x = "Minutes", 
+       y = "Number of rides") +
+  scale_color_fivethirtyeight() +
+  theme_fivethirtyeight() +
+  theme(axis.line.x = element_line(size = .5, colour = "black"),
+        axis.title = element_text(size = 12),
+        legend.position = "right",
+        legend.direction = "vertical",
+        legend.box = "vertical",
+        legend.key.size = unit(0.7, "cm"),
+        legend.text = element_text(size = 10),
+        text = element_text(family = "OfficinaSanITC-Book"),
+        plot.title = element_text(family = "OfficinaSanITC-Book")) +
+  theme(legend.title=element_blank()) + 
+  scale_fill_manual(values = c("darkorange", "dodgerblue4")) 
+```
+
+```{r warning=FALSE, message=FALSE}
+# What is the mean duration of a ride?
+summary(bikes$tripduration/60) # 10.905 min
+
+sum(bikes$tripduration/60 > 10.905)/285552 # 0.3363906 - only 33% of rides e last longer than 10.905 min
+```
+
+####Mapping stations
+
+```{r warning=FALSE, message=FALSE}
+# Check the number of stations
+bikes %>%
+  summarise(n_distinct(start.station.name))
+
+mymap <- get_map(location = "New York", 
+                 maptype = "roadmap",
+                 zoom = 12)
+# n_distinct(start.station.name - 330
+
+# Create locations for mapping 
+locations <- bikes %>%
+  group_by(start.station.name) %>%
+  select(4:7)
+colnames(locations)
+```
+
+```{r echo=TRUE, warning=FALSE, message=FALSE}
+# Map bike stations, using ggmap
+bike.stations <- ggmap(mymap) + geom_point(aes(start.station.longitude,
+    start.station.latitude), data = locations, color = 'darkblue', size = 1)
+print(bike.stations)
+```
+
+**I tried to map the same with Leaflet, but my RStudio dies every time**
+```{r warning=FALSE, message=FALSE}
+# Mapping the same with Leaflet - my RStudio dies everytime, when I try it
+
+# m <- leaflet(locations) %>% addTiles("http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}", 
+#                                          attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>') 
+# m %>% setView(-74.00, 40.71, zoom = 13)
+# m %>% addCircles(~start.station.longitude, ~start.station.latitude, popup = locations, weight = 3, radius=2, 
+#                 color=~"darkred", stroke = TRUE, fillOpacity = 0.8) 
+```

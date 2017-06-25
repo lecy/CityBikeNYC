@@ -1,0 +1,178 @@
+---
+  title: "Mapping NYC Citi Bike Routes"
+output:
+  html_document:
+  keep_md: true
+theme: cerulean
+highlight: haddock
+---
+  
+  
+  
+  # Setup
+  
+  Add this code to set global options. Always initialize all of your packages up-front.
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F, fig.width=10)
+
+library( dplyr )
+library( ggmap )
+library( tibble )
+
+```
+
+
+
+# Load Data
+
+```{r}
+
+# Upload and analyze dataset
+# bikes <- readRDS("bikes.rds")
+bikes <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
+
+str(bikes) # 285552 rows
+summary(bikes)
+names(bikes)
+
+```
+
+
+
+# Attempt 1 (with dplyr)
+
+
+Explain what you are trying to do here...
+
+
+```{r}
+
+
+# Deleting all columns besides start station lat and long
+# Start station
+
+start.station <- bikes %>% as_tibble() %>% 
+  mutate(tripduration = NULL, starttime = NULL, stoptime = NULL, start.station.id = NULL,
+         start.station.name = NULL, end.station.id = NULL, end.station.name = NULL, 
+         end.station.latitude = NULL, end.station.longitude = NULL, bikeid = NULL, usertype = NULL, 
+         birth.year = NULL, gender = NULL)
+head(start.station, 10)
+
+
+# Deleting all columns besides end station lat and long
+# End station
+
+end.station <- bikes %>% as_tibble() %>% 
+  mutate(tripduration = NULL, starttime = NULL, stoptime = NULL, start.station.id = NULL,
+         start.station.name = NULL, start.station.latitude = NULL, start.station.longitude = NULL, 
+         end.station.id = NULL, end.station.name = NULL, bikeid = NULL, usertype = NULL, 
+         birth.year = NULL, gender = NULL)
+head(end.station, 10)
+
+
+
+# Merge data (long and lat columns for start and end station by id)
+bikes.merged <- merge(start.station, end.station, by="ID")
+head(bikes.merged, 10)
+
+head(table(table(bikes.merged$ID)), 10)
+# 1       4     9    16     25    36    49    64    81    100 
+# 12932  6848  4400  3182  2355  1899  1543  1264  1162   983
+
+
+
+
+# Group and summarize data 
+bikes.merged1 <- bikes.merged %>%
+  group_by(ID) %>%
+  summarise(n = n())
+
+
+
+
+# unique(bikes.merged1)
+# ID     n
+# <chr> <int>
+# 1  116-116   400
+# 2  116-127   100
+# 3  116-128     1
+# 4  116-147    16
+# 5  116-151    16
+# 6  116-153   169
+# 7  116-157     1
+# 8  116-160     9
+# 9  116-167     1
+# 10 116-168  1600
+# ... with 44,063 more rows
+
+
+```
+
+
+
+
+
+
+
+# Attempt 2 (with dplyr)
+
+Explain what you are trying to do here...
+
+Another approach - not to merge two dataframes, but create the only one with dplyr.
+
+
+
+
+
+```{r}
+
+
+stations <- bikes %>% as_tibble() %>% 
+  mutate(tripduration = NULL, starttime = NULL, stoptime = NULL, start.station.id = NULL,
+         start.station.name = NULL, end.station.id = NULL, end.station.name = NULL, bikeid = NULL, usertype = NULL, 
+         birth.year = NULL, gender = NULL)
+
+head(stations, 10)
+
+
+
+
+bikes2 <- stations %>%
+  group_by(ID) %>%
+  summarise(n = n())
+
+
+# A tibble: 44,073 
+# ID     n
+# <chr> <int>
+#  1  116-116    20
+# 2  116-127    10
+# 3  116-128     1
+# 4  116-147     4
+# 5  116-151     4
+# 6  116-153    13
+# 7  116-157     1
+# 8  116-160     3
+# 9  116-167     1
+# 10 116-168    40
+# ... with 44,063 more rows
+
+
+
+
+
+head(table(table(stations$ID)), 10)
+# 1       4     9    16     25    36    49    64    81    100 
+# 12932  6848  4400  3182  2355  1899  1543  1264  1162   983 
+
+```
+
+
+# So, situation is different, answers are different - in the first approach we have observations, 
+# which are square rooted. 
+
+# Which of options is correct? 
+
+# Based on Environment, it looks like the second approach is correct. 
