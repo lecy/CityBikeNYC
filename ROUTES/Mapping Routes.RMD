@@ -1,0 +1,145 @@
+---
+title: "Mapping Routes"
+author: "Jesse Lecy"
+output:
+  html_document:
+    keep_md: true
+    theme: cerulean
+    highlight: haddock
+---
+
+
+## Setup
+
+```{r setup, include=TRUE}
+
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F, fig.width=10)
+
+library( ggmap )
+
+```
+
+
+
+# BUILD BIKE STATION DATABASE
+
+```{r}
+
+dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
+
+keep.these.vars <- c("start.station.id","start.station.name","start.station.latitude","start.station.longitude")
+
+stations <- unique( dat[ keep.these.vars ] )
+
+nrow( stations )
+
+names( stations ) <- c("ID","StationName","LAT","LON")
+
+stations <- stations[ order( stations$ID ) , ]
+
+rownames( stations ) <- NULL
+
+head( stations )
+
+
+```
+
+
+
+# Create Four Routes
+
+```{r}
+
+
+
+routes <- list()
+
+for( i in 2:5 )
+{
+
+   rt <- route( from=c(stations$LON[1], stations$LAT[1]), 
+             to=c(stations$LON[i], stations$LAT[i]), 
+             mode="bicycling",
+             structure="route" )
+   
+   route.name <- paste( "S.", stations$ID[1], "_to_S.", stations$ID[i], sep="" )
+
+   rt <- cbind( rt, from.to=route.name )
+
+   routes[[i]] <- rt
+
+   names(routes)[i] <- route.name
+
+}
+
+df <- do.call( rbind.data.frame, routes )
+
+
+head( df )
+
+
+
+
+qmplot( lon, lat, data = df, maptype = "toner-lite",
+        colour="red", size=2 ) + 
+  
+        geom_path(  aes( x=lon , y=lat), 
+            colour="red", data=df, alpha=1, size=1 ) +
+  
+        facet_wrap( ~ from.to ) +
+  
+        theme( legend.position="none", aspect.ratio=4/3 )
+
+
+```
+
+
+
+# Plotting All Routes Together
+
+The challenge here is overlaying many routes on top of each other. 
+
+
+```{r, fig.width=10, fig.height=10}
+
+
+routes <- list()
+
+for( i in 2:20 )
+{
+
+   rt <- route( from=c(stations$LON[1], stations$LAT[1]), 
+             to=c(stations$LON[i], stations$LAT[i]), 
+             mode="bicycling",
+             structure="route" )
+   
+   route.name <- paste( "S.", stations$ID[1], "_to_S.", stations$ID[i], sep="" )
+
+   rt <- cbind( rt, from.to=route.name )
+
+   routes[[i]] <- rt
+
+   names(routes)[i] <- route.name
+
+}
+
+df <- do.call( rbind.data.frame, routes )
+
+unique.routes <- unique( df$from.to )
+
+route.frequency <- data.frame( route=unique.routes, 
+                               trips=sample(1:50, length(unique.routes) ) )
+
+head( route.frequency )
+
+df <- merge( df, route.frequency, by.x="from.to", by.y="route" )
+
+nyc <- qmap( "New York City, NY", color='bw', zoom=13 )  
+
+nyc +  geom_path(  aes( x=lon , y=lat, group=from.to ), 
+            colour="#1E2B6A", data=df, alpha=0.5, size=df$trips/25 )
+
+
+
+```
+
