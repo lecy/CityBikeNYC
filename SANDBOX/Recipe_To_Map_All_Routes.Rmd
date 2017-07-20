@@ -1,0 +1,367 @@
+---
+title: "Mapping CityBike Routes"
+author: "Oleksiy Anokhin"
+date: "July 18, 2017"
+output:
+  html_document:
+    keep_md: true
+    df_print: paged
+    theme: cerulean
+    highlight: haddock
+    toc: yes
+    toc_float: yes
+---
+
+
+
+## Setup
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE, warning=F, message=F, fig.width=10)
+
+
+```
+
+
+```{r}
+
+library( dplyr )
+library( ggplot2 )
+library( ggmap )
+library( leaflet ) 
+
+```
+
+
+# Steps to Visualize Biking Data Routes
+
+The following steps are explained in this document.
+
+1. Create a list of unique stations.  
+2. Create a list of unique pairs of stations. 
+3. Create route for each pair of stations. 
+4. Create a map of NYC. 
+5. Add all routes to the map. 
+
+
+For this exercise we will use City Bike NYC data from January of 2015. It was obtained from the file posted on AWS, and saved as an RData file.
+
+
+
+# Load Data
+
+
+```{r}
+
+# Data for Bike Trips
+
+dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
+
+str( dat ) # Check the structure - 'data.frame':	285552 obs. of  16 variables
+
+names( dat )
+
+# Data on Routes
+
+```
+
+
+
+# Step 1. Create a list of unique stations
+
+```{r}
+
+
+
+# Pick start station attributes
+
+keep.these.vars <- c("start.station.id","start.station.name",
+                     "start.station.latitude","start.station.longitude")
+
+stations <- unique( dat[ keep.these.vars ])
+
+nrow(stations) # 330 unique stations
+
+names(stations) <- c("ID", "StationName", "LAT", "LON") # Rename column titles
+
+stations <- stations[order(stations$ID),] # put station in ID order from 72 till 3002
+
+rownames(stations) <- NULL
+
+head(stations)
+
+
+
+
+# The same with dplyr
+
+# Select four columns from "dat" dataframe. 
+test1 <- dat %>% 
+  select( start.station.id, 
+          start.station.name,
+          start.station.latitude,
+          start.station.longitude  )
+
+# Identify unique stations 
+# test2 <- dat %>% select( start.station.id,
+#                          start.station.name,
+#                          start.station.latitude, 
+#                          start.station.longitude) %>% distinct
+                        
+test2 <- test1  %>% distinct                      
+
+
+head( test2 )
+
+nrow( test2 )
+
+```
+
+
+We have 330 unique stations in the city:
+
+
+```{r}
+
+# plot unique stations and their IDs on a map
+
+```
+
+
+
+
+
+
+# Step 2. Identify unique pairs of stations.
+
+Index of all combinations
+
+
+```{r}
+
+# combinations of stations
+
+x <- c("A","B","C")
+t(combn(x, 2))
+
+
+```
+
+
+```{r}
+
+
+# In a loop, something like this:
+
+for( i in c("A","B","C") )
+{
+  
+  for( j in c("A","B","C") )
+  {
+    
+    paste( i, j, sep="-" )
+    
+  }
+  
+}
+```
+
+
+
+
+
+# Step 3. Create route for each pair of stations.
+
+Routes are queried through the Google Maps API.
+
+```{r eval=F}
+
+
+for(i in 1:330)
+{
+  print(paste("LOOP NUMBER", i))
+  flush.console()
+  routes <- list()
+  for(j in 1:330)
+  {
+    rt <- try(route(from=c(stations$LON[i], stations$LAT[i]), 
+                      to=c(stations$LON[j], stations$LAT[j]), 
+                      mode="bicycling",
+                      structure="route" 
+    ))
+    route.name <- paste("S.", stations$ID[i], "_to_S.", stations$ID[j], sep="")
+    rt <- cbind(rt, from.to=route.name)
+    routes[[j]] <- rt
+    names(routes)[j] <- route.name
+    print(paste("I=", i, "J=", j))
+    flush.console()
+  }  # end of j loop
+  
+  id <- substr(1000 + i, 2, 4)
+  list.name <- paste("RoutesFromStation", id, ".rda", sep="")
+  save(routes, file=list.name)
+}
+
+
+```
+
+
+
+
+
+# Step 4. Load a Map of NYC.
+
+
+```{r}
+
+
+# lots of ways to do this:
+
+# qmap 
+nyc <- qmap("New York City, NY", color='bw', zoom=13) 
+
+# ggmpap
+nyc_map <- get_map(location = c(lon = -74.00, lat = 40.71), maptype = "terrain", zoom = 11)
+ggmap(nyc_map)
+
+
+```
+
+### Leaflet
+
+```{r, eval=T}
+
+# Leaflet 1
+leaflet( dat ) %>% addTiles() %>% setView(-74.0059, 40.7128, zoom = 13)
+
+
+# addTiles("http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}", 
+#                                           attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>') 
+
+```
+
+
+```{r, eval=T}
+
+# Leaflet 2
+leaflet() %>%
+  addTiles() %>%
+  setView(-74.00, 40.71, zoom = 12) %>%
+  addProviderTiles("CartoDB.Positron")
+
+
+```
+
+
+
+# Step 5. Add all routes to the map.
+
+lots of ways to do this
+and we will need to play with aesthetics
+
+we can add multiple routes by grouping them,
+or we can layer them using a loop
+
+
+
+
+
+
+```{r, eval=F}
+
+
+df <- do.call(rbind.data.frame, routes)
+
+### create some fake trip data
+
+unique.routes <- unique(df$from.to) # pick all unique routes 
+
+route.frequency <- data.frame( route=unique.routes, 
+                               trips=sample(1:50, length(unique.routes)))
+
+head(route.frequency) 
+
+df <- merge(df, route.frequency, by.x="from.to", by.y="route") # merge data
+
+# Mapping data
+
+nyc <- qmap("New York City, NY", color='bw', zoom=13)  
+
+nyc + geom_path( aes( x=lon , y=lat, group=from.to), 
+                   colour="#1E2B6A", data=df, alpha=0.5, size=df$trips/25)
+```
+
+
+
+
+
+
+
+
+
+
+
+```{css}
+p {
+color: black;
+margin: 0 0 20px 0;
+}
+
+td {
+    padding: 3px 10px 3px 10px;
+    text-align: center;
+}
+
+table
+{ 
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:80px;
+    margin-bottom:100px;
+}
+
+h1, h2{
+  margin-top:100px;
+  margin-bottom:20px;
+}
+
+H5{
+    text-align: center;
+    color: gray;
+    font-size:0.8em;
+}
+
+img {
+    max-width: 90%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top:30px;
+    margin-bottom:20px;
+}
+
+pre {
+  overflow-x: auto;
+}
+
+pre code {
+   display: block; 
+   padding: 0.5em;
+   margin-bottom:20px;
+}
+
+code {
+  font-size: 92%;
+  border: 10px solid #F8F8F8;
+  margin-bottom: 2px;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+```
+
+
+
