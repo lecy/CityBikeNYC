@@ -38,24 +38,11 @@ rt <- route( from=c(-73.96905,40.75002),
 rt
 ```
 
-```
-##      m    km     miles seconds    minutes       hours leg       lon
-## 1   97 0.097 0.0602758      12  0.2000000 0.003333333   1 -73.96898
-## 2  228 0.228 0.1416792      83  1.3833333 0.023055556   2 -73.96842
-## 3 3510 3.510 2.1811140     703 11.7166667 0.195277778   3 -73.97079
-## 4   42 0.042 0.0260988       7  0.1166667 0.001944444   4 -73.99096
-## 5  158 0.158 0.0981812      70  1.1666667 0.019444444   5 -73.99103
-## 6  462 0.462 0.2870868     168  2.8000000 0.046666667   6 -73.99165
-## 7   NA    NA        NA      NA         NA          NA  NA -73.98655
-##        lat
-## 1 40.74999
-## 2 40.75075
-## 3 40.75174
-## 4 40.72412
-## 5 40.72375
-## 6 40.72241
-## 7 40.72088
-```
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":["m"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["km"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["miles"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["seconds"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["minutes"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["hours"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["leg"],"name":[7],"type":["int"],"align":["right"]},{"label":["lon"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["lat"],"name":[9],"type":["dbl"],"align":["right"]}],"data":[{"1":"97","2":"0.097","3":"0.0602758","4":"12","5":"0.2000000","6":"0.003333333","7":"1","8":"-73.96898","9":"40.74999"},{"1":"228","2":"0.228","3":"0.1416792","4":"83","5":"1.3833333","6":"0.023055556","7":"2","8":"-73.96842","9":"40.75075"},{"1":"3510","2":"3.510","3":"2.1811140","4":"703","5":"11.7166667","6":"0.195277778","7":"3","8":"-73.97079","9":"40.75174"},{"1":"42","2":"0.042","3":"0.0260988","4":"7","5":"0.1166667","6":"0.001944444","7":"4","8":"-73.99096","9":"40.72412"},{"1":"158","2":"0.158","3":"0.0981812","4":"70","5":"1.1666667","6":"0.019444444","7":"5","8":"-73.99103","9":"40.72375"},{"1":"462","2":"0.462","3":"0.2870868","4":"168","5":"2.8000000","6":"0.046666667","7":"6","8":"-73.99165","9":"40.72241"},{"1":"NA","2":"NA","3":"NA","4":"NA","5":"NA","6":"NA","7":"NA","8":"-73.98655","9":"40.72088"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 
 ```r
 # plot the route
@@ -98,22 +85,18 @@ nrow( stations )
 ```r
 names( stations ) <- c("ID","StationName","LAT","LON")
 
-rownames( stations ) <- NULL
-
 stations <- stations[ order( stations$ID ) , ]
+
+rownames( stations ) <- NULL
 
 head( stations )
 ```
 
-```
-##      ID                   StationName      LAT       LON
-## 77   72              W 52 St & 11 Ave 40.76727 -73.99393
-## 272  79      Franklin St & W Broadway 40.71912 -74.00667
-## 59   82        St James Pl & Pearl St 40.71117 -74.00017
-## 166  83 Atlantic Ave & Fort Greene Pl 40.68383 -73.97632
-## 101 116               W 17 St & 8 Ave 40.74178 -74.00150
-## 246 119      Park Ave & St Edwards St 40.69609 -73.97803
-```
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":["ID"],"name":[1],"type":["int"],"align":["right"]},{"label":["StationName"],"name":[2],"type":["fctr"],"align":["left"]},{"label":["LAT"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["LON"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"72","2":"W 52 St & 11 Ave","3":"40.76727","4":"-73.99393"},{"1":"79","2":"Franklin St & W Broadway","3":"40.71912","4":"-74.00667"},{"1":"82","2":"St James Pl & Pearl St","3":"40.71117","4":"-74.00017"},{"1":"83","2":"Atlantic Ave & Fort Greene Pl","3":"40.68383","4":"-73.97632"},{"1":"116","2":"W 17 St & 8 Ave","3":"40.74178","4":"-74.00150"},{"1":"119","2":"Park Ave & St Edwards St","3":"40.69609","4":"-73.97803"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 
 
 
@@ -150,6 +133,8 @@ for( i in 1:5 )
              structure="route" )
    
    route.name <- paste( "S.", stations$ID[1], "_to_S.", stations$ID[i], sep="" )
+   
+   rt <- cbind( rt, from.to=route.name )
 
    routes[[i]] <- rt
 
@@ -164,9 +149,9 @@ routes[ 1:3 ]
 
 ```
 ## $S.72_to_S.72
-##    m km miles seconds minutes hours leg       lon      lat
-## 1  0  0     0       0       0     0   1 -73.99576 40.76799
-## 2 NA NA    NA      NA      NA    NA  NA -73.99576 40.76799
+##    m km miles seconds minutes hours leg       lon      lat      from.to
+## 1  0  0     0       0       0     0   1 -73.99576 40.76799 S.72_to_S.72
+## 2 NA NA    NA      NA      NA    NA  NA -73.99576 40.76799 S.72_to_S.72
 ## 
 ## $S.72_to_S.79
 ##       m    km     miles seconds   minutes       hours leg       lon
@@ -182,19 +167,19 @@ routes[ 1:3 ]
 ## 10    6 0.006 0.0037284      52 0.8666667 0.014444444  10 -74.00694
 ## 11   23 0.023 0.0142922      19 0.3166667 0.005277778  11 -74.00692
 ## 12   NA    NA        NA      NA        NA          NA  NA -74.00666
-##         lat
-## 1  40.76799
-## 2  40.76917
-## 3  40.76932
-## 4  40.76073
-## 5  40.74847
-## 6  40.72423
-## 7  40.72427
-## 8  40.72410
-## 9  40.71945
-## 10 40.71912
-## 11 40.71917
-## 12 40.71911
+##         lat      from.to
+## 1  40.76799 S.72_to_S.79
+## 2  40.76917 S.72_to_S.79
+## 3  40.76932 S.72_to_S.79
+## 4  40.76073 S.72_to_S.79
+## 5  40.74847 S.72_to_S.79
+## 6  40.72423 S.72_to_S.79
+## 7  40.72427 S.72_to_S.79
+## 8  40.72410 S.72_to_S.79
+## 9  40.71945 S.72_to_S.79
+## 10 40.71912 S.72_to_S.79
+## 11 40.71917 S.72_to_S.79
+## 12 40.71911 S.72_to_S.79
 ## 
 ## $S.72_to_S.82
 ##       m    km     miles seconds     minutes       hours leg       lon
@@ -214,23 +199,23 @@ routes[ 1:3 ]
 ## 14   33 0.033 0.0205062       7  0.11666667 0.001944444  14 -73.99979
 ## 15   63 0.063 0.0391482      12  0.20000000 0.003333333  15 -73.99957
 ## 16   NA    NA        NA      NA          NA          NA  NA -74.00014
-##         lat
-## 1  40.76799
-## 2  40.76917
-## 3  40.76932
-## 4  40.76073
-## 5  40.74847
-## 6  40.71658
-## 7  40.71362
-## 8  40.71249
-## 9  40.71244
-## 10 40.71263
-## 11 40.71296
-## 12 40.71363
-## 13 40.71428
-## 14 40.71073
-## 15 40.71097
-## 16 40.71133
+##         lat      from.to
+## 1  40.76799 S.72_to_S.82
+## 2  40.76917 S.72_to_S.82
+## 3  40.76932 S.72_to_S.82
+## 4  40.76073 S.72_to_S.82
+## 5  40.74847 S.72_to_S.82
+## 6  40.71658 S.72_to_S.82
+## 7  40.71362 S.72_to_S.82
+## 8  40.71249 S.72_to_S.82
+## 9  40.71244 S.72_to_S.82
+## 10 40.71263 S.72_to_S.82
+## 11 40.71296 S.72_to_S.82
+## 12 40.71363 S.72_to_S.82
+## 13 40.71428 S.72_to_S.82
+## 14 40.71073 S.72_to_S.82
+## 15 40.71097 S.72_to_S.82
+## 16 40.71133 S.72_to_S.82
 ```
 
 
@@ -259,32 +244,11 @@ names( routes )
 routes[[ route.name ]]
 ```
 
-```
-##       m    km     miles seconds   minutes       hours leg       lon
-## 1   149 0.149 0.0925886      26 0.4333333 0.007222222   1 -73.99576
-## 2    36 0.036 0.0223704      60 1.0000000 0.016666667   2 -73.99492
-## 3  1144 1.144 0.7108816     206 3.4333333 0.057222222   3 -73.99529
-## 4  1501 1.501 0.9327214     257 4.2833333 0.071388889   4 -74.00256
-## 5   516 0.516 0.3206424      91 1.5166667 0.025277778   5 -74.00803
-## 6    27 0.027 0.0167778       6 0.1000000 0.001666667   6 -74.00872
-## 7    12 0.012 0.0074568      76 1.2666667 0.021111111   7 -74.00841
-## 8   659 0.659 0.4095026     172 2.8666667 0.047777778   8 -74.00839
-## 9    75 0.075 0.0466050      45 0.7500000 0.012500000   9 -74.00156
-## 10   23 0.023 0.0142922      24 0.4000000 0.006666667  10 -74.00113
-## 11   NA    NA        NA      NA        NA          NA  NA -74.00137
-##         lat
-## 1  40.76799
-## 2  40.76917
-## 3  40.76932
-## 4  40.76073
-## 5  40.74847
-## 6  40.74392
-## 7  40.74386
-## 8  40.74396
-## 9  40.74107
-## 10 40.74166
-## 11 40.74177
-```
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":["m"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["km"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["miles"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["seconds"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["minutes"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["hours"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["leg"],"name":[7],"type":["int"],"align":["right"]},{"label":["lon"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["lat"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["from.to"],"name":[10],"type":["fctr"],"align":["left"]}],"data":[{"1":"149","2":"0.149","3":"0.0925886","4":"26","5":"0.4333333","6":"0.007222222","7":"1","8":"-73.99576","9":"40.76799","10":"S.72_to_S.116"},{"1":"36","2":"0.036","3":"0.0223704","4":"60","5":"1.0000000","6":"0.016666667","7":"2","8":"-73.99492","9":"40.76917","10":"S.72_to_S.116"},{"1":"1144","2":"1.144","3":"0.7108816","4":"206","5":"3.4333333","6":"0.057222222","7":"3","8":"-73.99529","9":"40.76932","10":"S.72_to_S.116"},{"1":"1501","2":"1.501","3":"0.9327214","4":"257","5":"4.2833333","6":"0.071388889","7":"4","8":"-74.00256","9":"40.76073","10":"S.72_to_S.116"},{"1":"516","2":"0.516","3":"0.3206424","4":"91","5":"1.5166667","6":"0.025277778","7":"5","8":"-74.00803","9":"40.74847","10":"S.72_to_S.116"},{"1":"27","2":"0.027","3":"0.0167778","4":"6","5":"0.1000000","6":"0.001666667","7":"6","8":"-74.00872","9":"40.74392","10":"S.72_to_S.116"},{"1":"12","2":"0.012","3":"0.0074568","4":"76","5":"1.2666667","6":"0.021111111","7":"7","8":"-74.00841","9":"40.74386","10":"S.72_to_S.116"},{"1":"659","2":"0.659","3":"0.4095026","4":"172","5":"2.8666667","6":"0.047777778","7":"8","8":"-74.00839","9":"40.74396","10":"S.72_to_S.116"},{"1":"75","2":"0.075","3":"0.0466050","4":"45","5":"0.7500000","6":"0.012500000","7":"9","8":"-74.00156","9":"40.74107","10":"S.72_to_S.116"},{"1":"23","2":"0.023","3":"0.0142922","4":"24","5":"0.4000000","6":"0.006666667","7":"10","8":"-74.00113","9":"40.74166","10":"S.72_to_S.116"},{"1":"NA","2":"NA","3":"NA","4":"NA","5":"NA","6":"NA","7":"NA","8":"-74.00137","9":"40.74177","10":"S.72_to_S.116"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 
 
 Route names are built using the `paste()` function:
@@ -342,7 +306,7 @@ You can save your progress by saving and loading lists as follows:
 ```r
 saveRDS( routes, file="routes.rds " )
 
-loadRDS( "routes.rds" )
+readRDS( "routes.rds" )
 ```
 
 
@@ -379,7 +343,6 @@ https://developers.google.com/maps/web-services/
 
 
 
-
 ```r
 ggmap_credentials()
 ```
@@ -395,10 +358,9 @@ ggmap_credentials()
 ```
 
 ```r
-API_KEY <- "AbCdEfGhIjKlMnOpQrStUvWxYz"
+API_KEY <- "AbCdEfGhIjKlMnOpQrStUvWxYz"    # fake key for demo
 
-register_google( key=API_KEY, account_type="premium", day_limit=110000 )
-
+register_google( key=API_KEY, account_type="premium", day_limit=10000 )
 
 ggmap_credentials()
 ```
@@ -407,10 +369,14 @@ ggmap_credentials()
 ## Google - 
 ##    key : AbCdEfGhIjKlMnOpQrStUvWxYz 
 ##    account_type : premium 
-##    day_limit : 110000 
+##    day_limit : 10000 
 ##    second_limit : 50 
 ##    client :  
 ##    signature :
+```
+
+```r
+routeQueryCheck()
 ```
 
 
@@ -439,6 +405,8 @@ for( i in 1:330 )
                  ) )
      
      route.name <- paste( "S.", stations$ID[i], "_to_S.", stations$ID[j], sep="" )
+     
+     rt <- cbind( rt, from.to=route.name )
   
      routes[[j]] <- rt
   
@@ -477,7 +445,190 @@ for( i in 1:length(file.names) )
 
 }
 
-save( all.routes, file="ALL_ROUTES.rda" )
+
+saveRDS( all.routes, file="ALL_ROUTES_LIST.rds" )
 ```
 
+
+# Fix Broken Routes
+
+If your internet connection is bad, or if you hit query limits, you will have erroneous routes in your files. These can be fixed by identifying the errors and re-running those specific routes. Of the 108,000 routes I created, I had approximately 3,500 bad routes (error messages) due to bad internet connections.
+
+
+```r
+table( unlist(lapply( all.routes, class )) )
+
+route <- NULL
+status <- NULL
+
+for( i in 1:length(all.routes) )
+{
+    route[i] <- names( all.routes[i] )
+    status[i] <- class( all.routes[[i]] )
+}
+
+success.log <- data.frame( route, status )
+
+head( success.log )
+
+nrow( success.log )
+
+table( success.log$status )
+
+these <- which( status == "try-error" )
+
+
+
+
+route.names <- route[ these ]
+
+route.names2 <- gsub( "S.", "", route.names )
+from.to <- strsplit( route.names2, "_to_" )
+
+
+for( i in 1:length(these) )
+{
+  
+  print( paste( "ROUTE NAME:", route.names[i] ) )
+  flush.console()
+
+  from.id <- from.to[[i]][1]
+  to.id <- from.to[[i]][2]
+
+  from.station <- stations[ stations$ID == from.id , ]
+  to.station <- stations[ stations$ID == to.id , ]
+
+  rt <- try( route( from=c(from.station$LON, from.station$LAT), 
+                  to=c(to.station$LON, to.station$LAT), 
+                  mode="bicycling",
+                  structure="route" 
+                 ) )
+     
+     route.name <- route.names[i]
+
+     if( names( all.routes[these[i]] ) == route.name )
+     {
+  
+       all.routes[[these[i]]] <- rt
+
+     } else( print("DOES NOT MATCH") )
+  
+
+  
+}
+
+
+table( unlist(lapply( all.routes, class )) )
+
+
+# re-save
+
+saveRDS( all.routes, file="ALL_ROUTES_LIST.rds" )
+```
+
+
+
+
+
+
+These can be translated into a data frame by:
+
+
+```r
+# add route name to the data frames
+
+for( i in 1:length(all.routes) )
+{
+    all.routes[[i]] <- cbind( all.routes[[i]], route=names(all.routes[i]) )
+}
+
+df <- do.call( rbind.data.frame, all.routes )
+
+head( df )
+
+saveRDS( all.routes, file="ALL_ROUTES_DF.rds" )
+```
+
+
+
+# Routes Available on GitHub
+
+The routes database (list) and data frame have been posted to GitHub in the DATA repository. The can be loaded by:
+
+
+
+
+```r
+rt <- readRDS( gzcon (url( "https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds" ) ) )
+
+rt <- readRDS( gzcon (url( "https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_DF.rds" ) ) )
+```
+
+
+
+
+
+
+
+
+<style type="text/css">
+p {
+color: black;
+margin: 0 0 20px 0;
+}
+
+td {
+    padding: 3px 10px 3px 10px;
+    text-align: center;
+}
+
+table
+{ 
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:80px;
+    margin-bottom:100px;
+}
+
+h1, h2{
+  margin-top:100px;
+  margin-bottom:20px;
+}
+
+H5{
+    text-align: center;
+    color: gray;
+    font-size:0.8em;
+}
+
+img {
+    max-width: 90%;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top:30px;
+    margin-bottom:20px;
+}
+
+pre {
+  overflow-x: auto;
+}
+
+pre code {
+   display: block; 
+   padding: 0.5em;
+   margin-bottom:20px;
+}
+
+code {
+  font-size: 92%;
+  border: 10px solid #F8F8F8;
+  margin-bottom: 2px;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+</style>
 
