@@ -18,11 +18,11 @@ output:
 
 ```{r setup, include=FALSE}
 
-knitr::opts_chunk$set(echo = TRUE, warning=F, message=F, fig.width=10)
-
+knitr::opts_chunk$set( echo = TRUE, warning=F, message=F, fig.width=10 )
 
 ```
 
+We will use the following packages:
 
 ```{r}
 
@@ -30,6 +30,8 @@ library( dplyr )
 library( ggplot2 )
 library( ggmap )
 library( leaflet ) 
+library( tigris )
+library( sp )
 
 ```
 
@@ -54,32 +56,205 @@ For this exercise we will use City Bike NYC data from January of 2015. It was ob
 
 ```{r}
 
-# Data for Bike Trips
+# Data for Bike Trips for January, 2015
 
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
 
-str( dat ) # Check the structure - 'data.frame':	285552 obs. of  16 variables
+dim( dat )
 
-names( dat )
+head( dat )
 
-# Data on Routes
+
+
+
+# Basic Bike Station Info
+
+stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
+
+dim( stations )
+
+head( stations )
+
+
+
+
+
+
+# Data on All Possible Routes (see below)
+
+routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
+
+routes.list[1]
+
+routes.df <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_DF.rds")))
+
+head( routes.df )
+
+
 
 ```
 
 
 
-# Step 1. Create a list of unique stations
+
+# Step 1: Load a Map of NYC
+
+
+Let's start with a simple step, visualizing the city. We can do this in multiple ways.
+
+
+
+## Shapefiles
+
+The `tigris` package provides nice functions for downloading Census Tiger shapefiles. The limitation of this approach is that it lacks a nice set of orientating features like streets and parks.
+
+
 
 ```{r}
 
+# library(tigris)
+# library(sp)
 
+ny <- counties( state="NY" )
+
+# New York County: 36061
+# Queens: 36081
+# Bronx: 36005
+# Brooklyn: 36047
+# Staten Island: 36085
+
+manhattan.water <- area_water( state="NY", county="061" )
+queens.water <- area_water( state="NY", county="081" )
+bronx.water <- area_water( state="NY", county="005" )
+brooklyn.water <- area_water( state="NY", county="047" )
+# staten.water <- area_water( state="NY", county="085" )
+
+
+nyc <- ny[ ny$GEOID %in% c(36061,36081,36005,36047) , ]
+
+
+
+
+par( mar=c(0,0,0,0), bg="lightblue" )
+plot( nyc, border=NA, col="gray95" )
+plot( manhattan.water, col="lightblue", border=NA, add=T )
+plot( queens.water, col="lightblue", border=NA, add=T )
+plot( bronx.water, col="lightblue", border=NA, add=T )
+plot( brooklyn.water, col="lightblue", border=NA, add=T )
+# plot( staten.water, col="lightblue", border=NA, add=T )
+
+text( as.numeric(nyc$INTPTLON), as.numeric(nyc$INTPTLAT), nyc$NAME, cex=1 )
+
+# stations.url <- "https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds"
+# stations <- readRDS(gzcon(url( stations.url )))
+# points( stations$LON, stations$LAT, col="darkred", pch=19, cex=0.3 )
+
+```
+
+The advantage is that Census shapefiles are drawn as polygons, which keeps the maps simple and clean.
+
+```{r, fig.width=10,fig.height=15 }
+
+nyc <- ny[ ny$GEOID %in% c(36061,36081,36005,36047) , ]
+
+par( mar=c(0,0,0,0), bg="gray" )
+plot( nyc, border=NA, col="white", xlim=c(-74.027,-73.94377), ylim=c(40.67611,40.77737 ) )
+plot( manhattan.water, col="gray", border=NA, add=T )
+plot( queens.water, col="gray", border=NA, add=T )
+plot( bronx.water, col="gray", border=NA, add=T )
+plot( brooklyn.water, col="gray", border=NA, add=T )
+# points( stations$LON, stations$LAT, col="firebrick2", pch=19, cex=0.5 )
+
+```
+
+
+
+## ggmap Package
+
+Alternatively, the **`ggmap`** package connects with geographic databases like Google Maps to grab map tiles, which are PNG files the provide a backdrop to the plotting window.
+
+The advantage is that these tiles provide a lot of rich contextual detail and are simple to use. 
+
+```{r, fig.width=10,fig.height=10}
+
+# library( ggmap )
+
+qmap( "New York City, NY",  zoom=11 ) 
+
+
+```
+
+
+We can fine-tune the maps using options in the `get_map()` function:
+
+```{r, fig.width=10,fig.height=10}
+
+nyc_map <- get_map( location = c(lon = -74.00, lat = 40.71), 
+                    maptype = "terrain", col="bw", zoom = 13 )
+
+ggmap( nyc_map, extent="device" )
+
+```
+
+We can include even more options using the `get_googlemap()` function, including turning off text that clutters the map.
+
+```{r, fig.width=10,fig.height=10}
+
+map <- get_googlemap( center = 'east village, ny', zoom = 13, col="bw",
+       style = 'style=feature:all|element:labels|visibility:off' )
+
+ggmap( map, extent="device" )
+
+```
+
+
+## Leaflet Package
+
+Leaflet allows us to create dynamic web maps that allow the user to zoom and search the map.
+
+```{r, eval=T, fig.width=8 }
+
+# library( leaflet )
+
+leaflet( ) %>% addTiles() %>% setView(-74.0059, 40.7128, zoom = 13)
+
+
+```
+
+
+We can also fine-tune the aesthetics in Leaflet using myriad free map styles:
+
+```{r, eval=T, fig.width=8 }
+
+# Leaflet 2
+leaflet() %>%
+  addTiles() %>%
+  setView(-74.00, 40.71, zoom = 12) %>%
+  addProviderTiles("CartoDB.Positron")
+
+
+```
+
+
+
+
+
+# Step 2: Create a Database of Unique Stations
+
+Starting with the Bike Routes data provided by CityBike on AWS, we can create a database of all of the stations operating in the city at the time.
+
+```{r}
+
+names( dat )
 
 # Pick start station attributes
 
-keep.these.vars <- c("start.station.id","start.station.name",
-                     "start.station.latitude","start.station.longitude")
+keep.these.vars <- c( "start.station.id",
+                      "start.station.name",
+                     "start.station.latitude",
+                     "start.station.longitude" )
 
-stations <- unique( dat[ keep.these.vars ])
+stations <- unique( dat[ keep.these.vars ] )
 
 nrow(stations) # 330 unique stations
 
@@ -92,67 +267,102 @@ rownames(stations) <- NULL
 head(stations)
 
 
+```
 
+```{r, eval=F}
 
-# The same with dplyr
+# dplyr approach
 
-# Select four columns from "dat" dataframe. 
-test1 <- dat %>% 
+# Select four columns from "dat" dataframe and identify unique
+
+stations <- dat %>% 
   select( start.station.id, 
           start.station.name,
           start.station.latitude,
-          start.station.longitude  )
-
-# Identify unique stations 
-# test2 <- dat %>% select( start.station.id,
-#                          start.station.name,
-#                          start.station.latitude, 
-#                          start.station.longitude) %>% distinct
-                        
-test2 <- test1  %>% distinct                      
-
-
-head( test2 )
-
-nrow( test2 )
-
-```
-
-
-We have 330 unique stations in the city:
-
-
-```{r}
-
-# plot unique stations and their IDs on a map
-
-```
-
-
-
-
-
-
-# Step 2. Identify unique pairs of stations.
-
-Index of all combinations
-
-
-```{r}
-
-# combinations of stations
-
-x <- c("A","B","C")
-t(combn(x, 2))
+          start.station.longitude  ) %>% 
+  distinct                      
 
 
 ```
 
 
+
+We should have 330 unique stations in the city:
+
+
+```{r, fig.width=10, fig.height=15 }
+
+
+nyc <- ny[ ny$GEOID %in% c(36061,36081,36005,36047) , ]
+
+par( mar=c(0,0,0,0), bg="gray" )
+plot( nyc, border=NA, col="white", xlim=c(-74.027,-73.94377), ylim=c(40.67611,40.77737 ) )
+plot( manhattan.water, col="gray", border=NA, add=T )
+plot( queens.water, col="gray", border=NA, add=T )
+plot( bronx.water, col="gray", border=NA, add=T )
+plot( brooklyn.water, col="gray", border=NA, add=T )
+# points( stations$LON, stations$LAT, col="firebrick2", pch=19, cex=0.5 )
+
+
+points( stations$LON, stations$LAT, col="darkred", pch=19, cex=0.7 )
+
+text( stations$LON, stations$LAT, stations$ID, pos=3, cex=0.6, offset=0.3, col="gray40" )
+
+
+```
+
+
+
+```{r, fig.width=10, fig.height=10}
+
+# library( ggmap )
+
+map <- get_googlemap( center = 'east village, ny', zoom = 13, col="bw",
+       style = 'style=feature:all|element:labels|visibility:off' )
+
+myplot <- ggmap( map, extent="device" )
+
+myplot + geom_point( aes(x = LON, y = LAT ), colour="darkred", size=1, data = stations )
+
+```
+
+
+
+
+
+
+
+# Step 3: Identify Station Pairs
+
+We will visualize a bike route using the `route()` function in **ggmap**, which builds a set of directions by querying a start and end point through the Google Maps API. Each route will look something like this:
+
+```{r, fig.width=10,fig.height=10}
+
+# get the route from Google
+
+rt <- route( from=c(-73.96905,40.75002), 
+             to=c(-73.99148,40.72229), 
+             mode="bicycling",
+             structure="route" )
+
+rt
+
+
+# plot the route in ggmap
+
+nyc <- qmap( "New York City, NY", color='bw', zoom=13 )  
+
+nyc +  geom_path(  aes( x = rt$lon , y = rt$lat ), 
+            colour="red", data=rt, alpha=1, size=2 )
+
+```
+
+
+There are only 330 stations, which might make this sounds like a simple problem. Unfortunately, there are quite a few unique combinations of these stations. Specifically, there are 330 *x* 329 = 108,570 unique routes possible.   
+
+We will build the routes database using iterated calls to the Google Maps API using a loop structure that looks something like this:
+
 ```{r}
-
-
-# In a loop, something like this:
 
 for( i in c("A","B","C") )
 {
@@ -160,7 +370,7 @@ for( i in c("A","B","C") )
   for( j in c("A","B","C") )
   {
     
-    paste( i, j, sep="-" )
+    print( paste( "Route ID: ", i, "-", j, sep="" ) )
     
   }
   
@@ -171,9 +381,12 @@ for( i in c("A","B","C") )
 
 
 
-# Step 3. Create route for each pair of stations.
 
-Routes are queried through the Google Maps API.
+
+# Step 4: Build the Routes Database
+
+See the tutoral on Buiding the Routes Database for more info on these steps. The basic script was:
+
 
 ```{r eval=F}
 
@@ -207,94 +420,122 @@ for(i in 1:330)
 ```
 
 
+The script generated routes for all ~108,000 unique station pairs (since there are one-way streets in NYC we did not assume that the route from from point i to point j would be identical to the route from point j to point i). These routes have been saved as a database and are available on GitHub in the DATA folder. 
 
+We included a version that stores each route as a separate data frame in a list. The list elements can be referenced by the route name (e.g. "S.71_to_S.398"). We also include a version that has all routes stored as a single data frame.
 
-
-# Step 4. Load a Map of NYC.
-
-
-```{r}
-
-
-# lots of ways to do this:
-
-# qmap 
-nyc <- qmap("New York City, NY", color='bw', zoom=13) 
-
-# ggmpap
-nyc_map <- get_map(location = c(lon = -74.00, lat = 40.71), maptype = "terrain", zoom = 11)
-ggmap(nyc_map)
-
-
-```
-
-### Leaflet
-
-```{r, eval=T}
-
-# Leaflet 1
-leaflet( dat ) %>% addTiles() %>% setView(-74.0059, 40.7128, zoom = 13)
-
-
-# addTiles("http://korona.geog.uni-heidelberg.de/tiles/roadsg/x={x}&y={y}&z={z}", 
-#                                           attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>') 
-
-```
-
-
-```{r, eval=T}
-
-# Leaflet 2
-leaflet() %>%
-  addTiles() %>%
-  setView(-74.00, 40.71, zoom = 12) %>%
-  addProviderTiles("CartoDB.Positron")
-
-
-```
-
-
-
-# Step 5. Add all routes to the map.
-
-lots of ways to do this
-and we will need to play with aesthetics
-
-we can add multiple routes by grouping them,
-or we can layer them using a loop
-
-
-
-
-
+They can be loaded by:
 
 ```{r, eval=F}
 
+# Data on All Possible Routes (see below)
 
-df <- do.call(rbind.data.frame, routes)
+routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
 
-### create some fake trip data
 
-unique.routes <- unique(df$from.to) # pick all unique routes 
+routes.df <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_DF.rds")))
 
-route.frequency <- data.frame( route=unique.routes, 
-                               trips=sample(1:50, length(unique.routes)))
 
-head(route.frequency) 
-
-df <- merge(df, route.frequency, by.x="from.to", by.y="route") # merge data
-
-# Mapping data
-
-nyc <- qmap("New York City, NY", color='bw', zoom=13)  
-
-nyc + geom_path( aes( x=lon , y=lat, group=from.to), 
-                   colour="#1E2B6A", data=df, alpha=0.5, size=df$trips/25)
 ```
 
 
 
 
+
+
+
+# Step 5: Mapping Routes
+
+The visualization of CityBike traffic requires that we layer many bike trips onto the base map. We can do this through a loop, or treating each route as a factor level and adding them all together.
+
+
+
+## Using Core Plot Functions
+
+
+
+### White Background
+
+```{r, fig.width=10,fig.height=15}
+
+
+# create a bounding box using station locations
+
+max.lat <- max( stations$LAT )
+max.lon <- max( stations$LON )
+min.lat <- min( stations$LAT )
+min.lon <- min( stations$LON )
+
+# uses the list version of routes
+
+par( mar=c(0,0,0,0) )
+
+plot( NA, NA, xlim=c(min.lon,max.lon), ylim=c(min.lat,max.lat), bty="n", 
+      yaxt="n", xaxt="n" )
+
+for( i in 1:length( routes.list ) )
+{
+
+   # sub.dat <- d2[ ]
+
+   lines( routes.list[[i]]$lon, routes.list[[i]]$lat, col="gray" )
+
+}
+
+points( stations$LON, stations$LAT, col="darkred", pch=19, cex=0.7 )
+
+```
+
+
+
+### Black Background
+
+```{r, fig.width=10,fig.height=15}
+
+par( mar=c(0,0,0,0), bg="black" )
+
+plot( NA, NA, xlim=c(min.lon,max.lon), ylim=c(min.lat,max.lat) )
+
+
+for( i in 1:length( routes.list ) )
+{
+
+   # sub.dat <- d2[ ]
+
+   lines( routes.list[[i]]$lon, routes.list[[i]]$lat, col="gray" )
+
+}
+
+points( stations$LON, stations$LAT, col="darkorange2", pch=19, cex=1 )
+
+```
+
+
+
+## In ggmap
+
+```{r, fig.width=10,fig.height=10}
+
+
+
+map <- get_googlemap( center = 'east village, ny', zoom = 13, col="bw",
+       style = 'style=feature:all|element:labels|visibility:off' )
+
+myplot <- ggmap( map, extent="device" )
+
+# uses the data frame version of routes
+
+myplot <- myplot + 
+          
+  geom_path( aes(x = lon, y = lat, group = factor(route) ), 
+            colour="#1E2B6A", data = routes.df ) + 
+  
+  geom_point( aes(x = LON, y = LAT ), 
+              colour="darkorange2", size=1.5, data = stations )
+
+myplot
+
+```
 
 
 
