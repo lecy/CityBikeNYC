@@ -53,7 +53,7 @@ head( stations )
 
 # Create Four Routes
 
-```{r}
+```{r, fig.width=10, fig.height=10}
 
 
 
@@ -100,7 +100,7 @@ qmplot( lon, lat, data = df, maptype = "toner-lite",
 
 
 
-# Plotting All Routes Together
+# Plotting Multiple Routes
 
 The challenge here is overlaying many routes on top of each other. 
 
@@ -139,10 +139,19 @@ head( route.frequency )
 
 df <- merge( df, route.frequency, by.x="from.to", by.y="route" )
 
-nyc <- qmap( "New York City, NY", color='bw', zoom=13 )  
 
-nyc +  geom_path(  aes( x=lon , y=lat, group=from.to ), 
-            colour="#1E2B6A", data=df, alpha=0.5, size=df$trips/25 )
+
+
+map <- get_googlemap( center = 'east village, ny', zoom = 13, col="bw",
+       style = 'style=feature:all|element:labels|visibility:off' )
+
+simple.nyc <- ggmap( map, extent="device" )
+
+simple.nyc +  geom_path(  aes( x=lon , y=lat, group=from.to ), 
+                          data=df, 
+                          colour="#1E2B6A", 
+                          alpha=0.5, 
+                          size=df$trips/25 )
 
 
 
@@ -150,6 +159,27 @@ nyc +  geom_path(  aes( x=lon , y=lat, group=from.to ),
 
 
 
+# Plotting All Possible Routes
+
+```{r, fig.width=10, fig.height=10}
+
+
+routes.df <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_DF.rds")))
+
+
+map <- get_googlemap( center = 'east village, ny', zoom = 13, col="bw",
+       style = 'style=feature:all|element:labels|visibility:off' )
+
+simple.nyc <- ggmap( map, extent="device" )
+
+simple.nyc +  geom_path(  aes( x=lon , y=lat, group=factor( route ) ), 
+                          data=routes.df, 
+                          colour="#1E2B6A", 
+                          alpha=0.5,
+                          size=0.5 )
+
+
+```
 
 
 

@@ -98,6 +98,10 @@ head( stations )
   </script>
 </div>
 
+```r
+saveRDS( stations, "STATIONS.rds")
+```
+
 
 
 

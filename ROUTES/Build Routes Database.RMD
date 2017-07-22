@@ -82,6 +82,8 @@ rownames( stations ) <- NULL
 
 head( stations )
 
+saveRDS( stations, "STATIONS.rds")
+
 
 ```
 

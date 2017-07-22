@@ -103,7 +103,7 @@ qmplot( lon, lat, data = df, maptype = "toner-lite",
 
 
 
-# Plotting All Routes Together
+# Plotting Multiple Routes
 
 The challenge here is overlaying many routes on top of each other. 
 
@@ -142,23 +142,52 @@ head( route.frequency )
 
 <div data-pagedtable="false">
   <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["route"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["trips"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"S.72_to_S.79","2":"5"},{"1":"S.72_to_S.82","2":"20"},{"1":"S.72_to_S.83","2":"7"},{"1":"S.72_to_S.116","2":"21"},{"1":"S.72_to_S.119","2":"32"},{"1":"S.72_to_S.120","2":"29"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["route"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["trips"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"S.72_to_S.79","2":"27"},{"1":"S.72_to_S.82","2":"50"},{"1":"S.72_to_S.83","2":"30"},{"1":"S.72_to_S.116","2":"37"},{"1":"S.72_to_S.119","2":"49"},{"1":"S.72_to_S.120","2":"18"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 
 ```r
 df <- merge( df, route.frequency, by.x="from.to", by.y="route" )
 
-nyc <- qmap( "New York City, NY", color='bw', zoom=13 )  
 
-nyc +  geom_path(  aes( x=lon , y=lat, group=from.to ), 
-            colour="#1E2B6A", data=df, alpha=0.5, size=df$trips/25 )
+
+
+map <- get_googlemap( center = 'east village, ny', zoom = 13, col="bw",
+       style = 'style=feature:all|element:labels|visibility:off' )
+
+simple.nyc <- ggmap( map, extent="device" )
+
+simple.nyc +  geom_path(  aes( x=lon , y=lat, group=from.to ), 
+                          data=df, 
+                          colour="#1E2B6A", 
+                          alpha=0.5, 
+                          size=df$trips/25 )
 ```
 
 ![](Mapping_Routes_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 
 
+# Plotting All Possible Routes
+
+
+```r
+routes.df <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_DF.rds")))
+
+
+map <- get_googlemap( center = 'east village, ny', zoom = 13, col="bw",
+       style = 'style=feature:all|element:labels|visibility:off' )
+
+simple.nyc <- ggmap( map, extent="device" )
+
+simple.nyc +  geom_path(  aes( x=lon , y=lat, group=factor( route ) ), 
+                          data=routes.df, 
+                          colour="#1E2B6A", 
+                          alpha=0.5,
+                          size=0.5 )
+```
+
+![](Mapping_Routes_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
 
 
