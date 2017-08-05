@@ -2,6 +2,11 @@
 
 Visualizing NYC CityBike data.
 
+![](./ASSETS/Aug_05_12_25_05_AM.png)
+
+<br>
+<br>
+
 ![](./ASSETS/weekdays.png)
 
 
