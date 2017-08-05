@@ -1,51 +1,24 @@
 
-
-
-
+# LOAD DATA
 
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
 stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
 routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
 
 
+# COMBINE STEPS INTO A FUNCTION
+#
+# to test:   bike.trips <- dat
 
-# count number of trips on each route
-
-countTrips <- function( bike.trip.dat )
+plotTrips <- function( bike.trips, add.water=F, 
+                       save.png=TRUE, pixel.height=12000, pixel.width=8000, 
+                       line.weight=40, station.size=8, background.color="black" )
 {
 
-
-  route.id <- NULL
-
-  for( i in 1:nrow( bike.trip.dat ) )
-  {
-    id1 <- bike.trip.dat$start.station.id[i]
-    id2 <- bike.trip.dat$end.station.id[i]
-
-
-    if( id1 > id2 ){  route.id[i] <- paste( "S.", id2, "_to_S.", id1, sep="" ) } 
-    if( id1 <= id2 ){  route.id[i] <- paste( "S.", id1, "_to_S.", id2, sep="" ) }
-
-  }
-
-  trip.count <- as.data.frame( table( route.id ) )
-
-  return( trip.count )
-}
-
-
-trip.count <- countTrips( bike.trip.dat=dat )
-
-tc <- trip.count[ 1:100 , ]
-
-
-# create a plot
-
-plotTrips <- function( trip.count, add.water=F, save.png=TRUE, pixel.height=12000, pixed.width=8000 )
-{
-
+	trip.count <- as.data.frame( table( bike.trips$route.id ) )
+	
 	max.trips <- max( trip.count$Freq )
-	trip.weight <- 40 * ( trip.count$Freq / max.trips )
+	trip.weight <- line.weight * ( trip.count$Freq / max.trips )
 
 	max.lat <- 40.77152
 	max.lon <- -73.95005
@@ -61,24 +34,16 @@ plotTrips <- function( trip.count, add.water=F, save.png=TRUE, pixel.height=1200
 		png( png.name, width=pixel.width, height=pixel.height )
 	}
 
-	par( mar=c(0,0,0,0), bg="black" )
+	par( mar=c(0,0,0,0), bg=background.color )
 
 	plot.new()
 	plot.window( xlim=c(min.lon,max.lon), ylim=c(min.lat,max.lat) )
 
-	if( add.water=T )
+	if( add.water )
 	{
-		library(tigris)
+		library( geojsonio )
 
-		ny <- counties( state="NY" )
-		nyc <- ny[ ny$GEOID %in% c(36061,36081,36005,36047) , ]
-
-		manhattan.water <- area_water( state="NY", county="061" )
-		queens.water <- area_water( state="NY", county="081" )
-		bronx.water <- area_water( state="NY", county="005" )
-		brooklyn.water <- area_water( state="NY", county="047" )
-
-		water <- rbind(manhattan.water,queens.water,bronx.water,brooklyn.water)
+		water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
 
 		plot( water, col="slategrey", border=NA, add=T )
 	}
@@ -86,12 +51,12 @@ plotTrips <- function( trip.count, add.water=F, save.png=TRUE, pixel.height=1200
 
 	for( i in 1:nrow( trip.count ) )
 	{
-	   single.route <- routes.list[[ trip.count$route.id[i] ]]
-	   lines( single.route$lon, single.route$lat, col="white", lwd=trip.weight[i] )
+	   single.route <- routes.list[[ trip.count$Var1[i] ]]
+	   lines( single.route$lon, single.route$lat, col="gray", lwd=trip.weight[i] )
 
 	}
 
-	points( stations$LON, stations$LAT, col="darkorange", pch=19, cex=8 )
+	points( stations$LON, stations$LAT, col="darkorange", pch=19, cex=station.size )
 
 	if( save.png )
 	{
@@ -103,10 +68,79 @@ plotTrips <- function( trip.count, add.water=F, save.png=TRUE, pixel.height=1200
 
 
 
+plotTrips( bike.trips=dat, add.water=T, save.png=T )
+
+plotTrips( bike.trips=dat, add.water=F, save.png=F, line.weight=5, station.size=1, background.color="white" )
+
+plotTrips( bike.trips=dat, add.water=T, save.png=F, line.weight=5, station.size=1, background.color="black" )
 
 
 
-plotTrips( trip.count=trip.count, add.water=T )
+
+# Subset rides by week day
+
+library( lubridate )
+library( dplyr )
+
+bike.date <- strptime(dat$starttime, format = "%m/%d/%Y") 
+bike.date.weekday <- weekdays(bike.date) # separated data by day
+table(bike.date.weekday)
+
+# So, we have: 
+# Friday    Monday  Saturday    Sunday  Thursday   Tuesday Wednesday 
+# 57829     38002     28080     26490     52905     38879     43367 
+
+# Map by weekday
+
+dat.mon <- dat[bike.date.weekday=="Monday",]
+dat.tues <- dat[bike.date.weekday=="Tuesday",]
+dat.wed <- dat[bike.date.weekday=="Wednesday",]
+dat.thur <- dat[bike.date.weekday=="Thursday",]
+dat.fri <- dat[bike.date.weekday=="Friday",]
+dat.sat <- dat[bike.date.weekday=="Saturday",]
+dat.sun <- dat[bike.date.weekday=="Sunday",]
 
 
 
+
+par( mfrow=c(2,4) ) 
+
+plotTrips( bike.trips=dat.mon, add.water=F, save.png=F, line.weight=2, station.size=0 )
+title( main="MONDAY", col.main="white", line=-1 )
+plotTrips( bike.trips=dat.tues, add.water=F, save.png=F, line.weight=2, station.size=0 )
+title( main="TUESDAY", col.main="white", line=-1 )
+plotTrips( bike.trips=dat.wed, add.water=F, save.png=F, line.weight=2, station.size=0 )
+title( main="WEDNESDAY", col.main="white", line=-1 )
+plotTrips( bike.trips=dat.thur, add.water=F, save.png=F, line.weight=2, station.size=0 )
+title( main="THURSDAY", col.main="white", line=-1 )
+plotTrips( bike.trips=dat.fri, add.water=F, save.png=F, line.weight=2, station.size=0 )
+title( main="FRIDAY", col.main="white", line=-1 )
+plotTrips( bike.trips=dat.sat, add.water=F, save.png=F, line.weight=2, station.size=0 )
+title( main="SATURDAY", col.main="white", line=-1 )
+plotTrips( bike.trips=dat.sun, add.water=F, save.png=F, line.weight=2, station.size=0 )
+title( main="SUNDAY", col.main="white", line=-1 )
+
+
+
+png( "weekdays.png", width=16000, height=8000 )
+
+par( mfrow=c(2,4) )
+
+plotTrips( bike.trips=dat.mon, add.water=F, save.png=F, line.weight=40, station.size=7 )
+title( main="MONDAY", col.main="white", line=-15, cex.main=20  )
+plotTrips( bike.trips=dat.tues, add.water=F, save.png=F, line.weight=40, station.size=7 )
+title( main="TUESDAY", col.main="white", line=-15, cex.main=20  )
+plotTrips( bike.trips=dat.wed, add.water=F, save.png=F, line.weight=40, station.size=7 )
+title( main="WEDNESDAY", col.main="white", line=-15, cex.main=20  )
+plotTrips( bike.trips=dat.thur, add.water=F, save.png=F, line.weight=40, station.size=7 )
+title( main="THURSDAY", col.main="white", line=-15, cex.main=20  )
+plotTrips( bike.trips=dat.fri, add.water=F, save.png=F, line.weight=40, station.size=7 )
+title( main="FRIDAY", col.main="white", line=-15, cex.main=20  )
+plotTrips( bike.trips=dat.sat, add.water=F, save.png=F, line.weight=40, station.size=7 )
+title( main="SATURDAY", col.main="white", line=-15, cex.main=20 )
+plotTrips( bike.trips=dat.sun, add.water=F, save.png=F, line.weight=40, station.size=7 )
+title( main="SUNDAY", col.main="white", line=-15, cex.main=20  )
+
+dev.off()
+
+shell( "weekdays.png" )
