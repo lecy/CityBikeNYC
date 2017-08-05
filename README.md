@@ -2,7 +2,13 @@
 
 Visualizing NYC CityBike data.
 
-Inspiration drawn from the following blogs:
+![](./ASSETS/weekdays.png)
+
+
+<br>
+<br>
+
+### Inspiration drawn from the following blogs:
 
 http://flowingdata.com/2014/02/05/where-people-run/
 
