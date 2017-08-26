@@ -131,6 +131,8 @@ https://www.visualcinnamon.com/2014/03/running-paths-in-amsterdam-step-2.html
 
 http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/
 
+https://tbaldw.in/citibike-trips/
+
 
 ![alt](ASSETS/DC-feature.png)
 
