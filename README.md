@@ -133,6 +133,8 @@ http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzin
 
 https://tbaldw.in/citibike-trips/
 
+https://www.r-bloggers.com/nyc-citi-bike-visualization-a-hint-of-future-transportation/
+
 
 ![alt](ASSETS/DC-feature.png)
 
