@@ -135,6 +135,7 @@ https://tbaldw.in/citibike-trips/
 
 https://www.r-bloggers.com/nyc-citi-bike-visualization-a-hint-of-future-transportation/
 
+http://ramnathv.github.io/bikeshare/
 
 ![alt](ASSETS/DC-feature.png)
 
