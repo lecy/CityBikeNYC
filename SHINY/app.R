@@ -4,6 +4,7 @@ library( lubridate )
 library( dplyr )
 library( shiny )
 library( shinythemes )
+library( eeptools )
 
 
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
@@ -18,10 +19,26 @@ bike.date <- strptime( dat$starttime, format = "%m/%d/%Y" )
 day.of.week <- weekdays( bike.date ) # separated data by day
 dat$day.of.week <- day.of.week
 
+age <- 2017 - dat$birth.year
+
+rider.age.groups <- c("Younger than 20", "20-29", "30-39", "40-49", "50-59", "60-69", "70+" )
+
+dat$age <- cut( age, breaks=c(0, 20, 30, 40, 50, 60, 70, 100), labels=rider.age.groups )
+
+table( dat$age )
 
 
+hours <- format(as.POSIXct(dat$starttime, format = "%m/%d/%Y %H:%M"), "%H")
 
+hours <- as.numeric( as.character( hours ))# transform 
 
+commute.categories <- c("Middle of Night: 12am-5am", "Morning Exercise: 5am-7am", "Morning Commute: 7am-10am", 
+                       "Lunch Ride: 10am-2pm","Afternoon Break: 2pm-4pm","Afternoon Commute: 4pm-7pm", 
+                       "After Dinner Commute: 7pm-10pm","Late Night Commute: 10pm-12am" )
+                       
+dat$time <- cut( hours, breaks=c(0, 5, 7, 10, 14, 16, 19, 22, 24), labels=commute.categories )
+
+table( dat$time )
 
 
 
@@ -86,21 +103,25 @@ my.server <- function(input, output)
 
   
   output$tripPlot <- renderPlot({  
-  
-                                     dat.sub1 <- dat[ dat$day.of.week == input$day1 & dat$gender == input$gender1 , ]
-                                     dat.sub2 <- dat[ dat$day.of.week == input$day2 & dat$gender == input$gender2 , ]
-                                     
+
+    dat.sub1 <- dat[ dat$day.of.week == input$day1 & dat$gender == input$gender1 &
+                       dat$age == input$age1 & dat$time == input$time1 , ]
+                       
+    dat.sub2 <- dat[ dat$day.of.week == input$day2 & dat$gender == input$gender2 &
+                       dat$age == input$age2 & dat$time == input$time2 , ]
+                              
                                      max.trips <- max( c( table( dat.sub1$route.id ), table( dat.sub2$route.id ) ) )
-                                     
+
+                  
                                      selected.gender1 <- ifelse( input$gender1 == 1, "Male", "Female" )
                                      selected.gender2 <- ifelse( input$gender2 == 1, "Male", "Female" )
-                                     
+                                                          
                                      par( mfrow=c(1,2) )
                                      plotTrips( bike.trips=dat.sub1, max.trip.num=max.trips )
-                                     title( main=toupper(paste(input$day1,selected.gender1,sep=":")), line=-3, cex.main=2, col.main="white" )
+                                     title( main=toupper(paste(input$day1,selected.gender1,input$age1,input$time1,sep=" : ")), line=-3, cex.main=1, col.main="white" )
                                      plotTrips( bike.trips=dat.sub2, max.trip.num=max.trips )
-                                     title( main=toupper(paste(input$day2,selected.gender2,sep=":")), line=-3, cex.main=2, col.main="white" )
-                                   
+                                     title( main=toupper(paste(input$day2,selected.gender2,input$age2,input$time2,sep=" : ")), line=-3, cex.main=1, col.main="white" )
+                                     
                                 },   height = 800, width = 800 )  # 
   
 }
@@ -133,17 +154,22 @@ my.ui <- fluidPage(
       selectInput( inputId="gender1", 
                    label="Select Female or Male", 
                    choices=c("Female"="2","Male"="1"),
-                   selected="Male"
+                   selected="1"
                  ), 
-      sliderInput( inputId="time1", 
+      # sliderInput( inputId="time1", 
+      #              label="Time of Day", 
+      #              min=0, max=24,
+      #              value=9 
+      #            ),
+      selectInput( inputId="time1", 
                    label="Time of Day", 
-                   min=0, max=24,
-                   value=c(7,9) 
-                 ),
+                   choices = commute.categories,
+                   selected="Morning Exercise: 5am-7am"
+                 ),     
       selectInput( inputId="age1", 
                    label="Age of Rider", 
-                   choices=c("Really Old","Boomer","Millenial"),
-                   selected="Millenial" 
+                   choices = rider.age.groups,
+                   selected="30-39" 
                  ),
 
       
@@ -152,22 +178,22 @@ my.ui <- fluidPage(
       selectInput( inputId="day2", 
                    label="Select Day of Week", 
                    choices=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"),
-                   selected="Sunday"
+                   selected="Monday"
                  ),
       selectInput( inputId="gender2", 
                    label="Select Female or Male", 
                    choices=c("Female"="2","Male"="1"),
-                   selected="Male"
+                   selected="2"
                  ), 
-      sliderInput( inputId="time2", 
+      selectInput( inputId="time2", 
                    label="Time of Day", 
-                   min=0, max=24,
-                   value=c(7,9) 
+                   choices= commute.categories,
+                   selected="Morning Exercise: 5am-7am" 
                  ),
       selectInput( inputId="age2", 
                    label="Age of Rider", 
-                   choices=c("Really Old","Boomer","Millenial"),
-                   selected="Millenial" 
+                   choices = rider.age.groups,
+                   selected="30-39"
                  )
     ),
 
