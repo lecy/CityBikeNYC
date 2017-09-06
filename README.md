@@ -16,9 +16,11 @@ runGitHub( repo="CityBikeNYC", username="lecy", subdir = "SHINY" )
 ![](./ASSETS/shiny_app_screenshot.png)
 
 <br>
+
+![](./ASSETS/shiny_app_screenshot2.png)
+
 <br>
-
-
+<br>
 
 
 
