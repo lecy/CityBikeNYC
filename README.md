@@ -2,6 +2,20 @@
 
 Visualizing NYC CityBike data.
 
+
+
+### Shiny App to Compare Route Traffic by Population Segment and Time
+
+```r
+
+install.packages( c("geojsonio","sp","lubridate","dplyr","shiny","shinythemes") )
+
+library( shiny )
+runGitHub( repo="CityBikeNYC", username="lecy", subdir = "SHINY" )
+```
+
+### Static Maps
+
 ```r
 
 # LOAD DATA
