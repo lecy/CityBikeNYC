@@ -67,7 +67,9 @@ The same live link:
 
 Read initial bike dataset
 
+```
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
+```
 
 #------------------------------------------------
 # Explain additionally creation of these files!!!
