@@ -153,22 +153,22 @@ plotTrips <- function( bike.trips, max.trip.num, add.water=T,
                        line.weight=5, station.size=0.5, background.color="black" )
 {
 
-trip count creates a dataframe a list of routes with their IDs  
+# trip count creates a dataframe a list of routes with their IDs  
   trip.count <- as.data.frame( table( bike.trips$route.id ) )
   
 max.trips <- max( trip.count$Freq )
 max.trips <- max( table( bike.trips$route.id, bike.trips$day.of.week ) )
   
-Specifying the thickness of the bike ride line
+# Specifying the thickness of the bike ride line
   trip.weight <- line.weight * ( trip.count$Freq / max.trip.num )
 
-Specify geolocation coordinates  
+# Specify geolocation coordinates  
   max.lat <- 40.77152
   max.lon <- -73.95005
   min.lat <- 40.68034
   min.lon <- -74.01713
 
-Specifiying limits  
+# Specifiying limits  
   dev.new()
   par( mar=c(0,0,0,0), bg=background.color )
   plot.new( )
@@ -184,7 +184,7 @@ water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/maste
     plot( water, col="slategrey", border=NA, add=T )
   }
   
-Visualize routes from the route list, matching t=it long and lat and regulating thickness of the line 
+# Visualize routes from the route list, matching t=it long and lat and regulating thickness of the line 
   for( i in 1:nrow( trip.count ) )
   {
     single.route <- routes.list[[ trip.count$Var1[i] ]]
@@ -192,12 +192,12 @@ Visualize routes from the route list, matching t=it long and lat and regulating 
     
   }
 
-Visualising bike station, based on long/lat and coloring it  
+# Visualising bike station, based on long/lat and coloring it  
   points( stations$LON, stations$LAT, col="darkorange", pch=19, cex=station.size )
   
 }
 
-Creating a map
+# Creating a map
 plotTrips( bike.trips=dat, max.trip.num=450 )
 ```
 
@@ -232,7 +232,7 @@ Create a map with two columns
 ```
     par( mfrow=c(1,2) )
 
-Function Plot trips allows us to visualize bot maps
+# Function Plot trips allows us to visualize bot maps
     plotTrips( bike.trips=dat.sub1, max.trip.num=max.trips )
     title( main=toupper(paste(input$day1,selected.gender1,input$age1,input$time1,sep=" : ")), line=-3, cex.main=1, col.main="white" )
     plotTrips( bike.trips=dat.sub2, max.trip.num=max.trips )
@@ -252,44 +252,44 @@ my.ui <- fluidPage(
   # theme = shinytheme("cyborg"),
   theme = shinytheme("slate"),
   
-Application title
+# Application title
   titlePanel("Citi Bike NYC Route Traffic"),
   
-Sidebar with a slider input for the number of bins
+# Sidebar with a slider input for the number of bins
   sidebarLayout(
     
     sidebarPanel(
       
       h2( helpText("First Map") ), 
       
-create inputs for the first map
+# create inputs for the first map
 
-For the day of the week we create input with different options, picking Monday as default.
+# For the day of the week we create input with different options, picking Monday as default.
       selectInput( inputId="day1", 
                    label="Select Day of Week", 
                    choices=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"),
                    selected="Monday"
       ),
-For the gender we create input with different options, picking Male as default.
+# For the gender we create input with different options, picking Male as default.
       selectInput( inputId="gender1", 
                    label="Select Female or Male", 
                    choices=c("Female"="2","Male"="1"),
                    selected="1"
       ), 
-For the time of the day we create input with different options, picking 5-7 am as default
+# For the time of the day we create input with different options, picking 5-7 am as default
       selectInput( inputId="time1", 
                    label="Time of Day", 
                    choices = commute.categories,
                    selected="Morning Exercise: 5am-7am"
       ), 
-For the age we create input with different options, picking M30-39 as default.
+# For the age we create input with different options, picking M30-39 as default.
       selectInput( inputId="age1", 
                    label="Age of Rider", 
                    choices = rider.age.groups,
                    selected="30-39" 
       ),
       
-The same approach is used for the second map       
+# The same approach is used for the second map       
       h2( helpText("Second Map") ),
       
       selectInput( inputId="day2", 
@@ -314,7 +314,7 @@ The same approach is used for the second map
       )
     ),
     
-Show a plot of the generated distribution
+# Show a plot of the generated distribution
     mainPanel(  plotOutput( "tripPlot" )  )
     
   )
