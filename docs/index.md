@@ -1,8 +1,8 @@
 # The Citi Bike NYC final project page
 
-Independent Study
+### Independent Study
 
-Visualizing NYC Citi Bike data
+### Visualizing NYC Citi Bike data
 
 # Introduction
 
