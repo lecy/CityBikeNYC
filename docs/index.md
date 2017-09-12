@@ -45,7 +45,7 @@ As a result, this study demonstrates results, based only on this specific month.
 It must be admitted that patterns of bike sharing probably are different for other months, 
 especially Summer ones. 
 
-Additional visualization of similar projects can be found here: 
+Additional visualization of similar projects can be found on the main page: 
 https://github.com/lecy/CityBikeNYC
 
 ```
