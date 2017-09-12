@@ -8,9 +8,7 @@
 
 This study was inspired by the following projects:
 
-A Tale of Twenty-Two Million Citi Bike Rides: Analyzing the NYC Bike Share System (by Todd Schneider)
-
-http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/
+[A Tale of Twenty-Two Million Citi Bike Rides: Analyzing the NYC Bike Share System (by Todd Schneider)](http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/)
 
 Bike sharing usage in Hamburg (by Alex Kruse)
 
