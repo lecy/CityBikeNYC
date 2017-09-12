@@ -2,7 +2,7 @@
 
 Independent Study
 
-Visualizing NYC Citi Bike trips
+Visualizing NYC Citi Bike data
 
 # Introduction
 
@@ -50,6 +50,8 @@ https://github.com/lecy/CityBikeNYC
 
 # Code
 
+# Preparing and reading the inital dataset
+
 ```
 Required packages:
 library( geojsonio )
@@ -61,14 +63,10 @@ library( shinythemes )
 library( eeptools )
 ```
 
-This is the example of basic analysis of data with dplyr: [Basic analysis](Bikes_Markdown.html)
-
-
-Read initial bike dataset
-
 ```
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
 ```
+
 This folder contains usage statistics for one month of the NYC Citybike bike share system in January of 2015. It contains 285,552 unique trips from 44,073 users.
 
 The dataset is available on was downloaded from the public repository: https://s3.amazonaws.com/tripdata/index.html
@@ -77,19 +75,23 @@ More information about the structure of "dat" can be found here:
 
 https://github.com/lecy/CityBikeNYC/tree/master/DATA
 
+This is the example of basic analysis of data with dplyr: [Basic analysis](Bikes_Markdown.html)
+
+
+# Creating the list of routes and background map.
+
+The following data was used:
+
 stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
-
-Creating the list of routes and background map.
-
 routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
 water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
 
-Detailed information about creating list of routes and the map can be found here. 
+Detailed information about creating stations, the list of routes and the map can be found here. 
 https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R
 https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md
 
 
-# Subseting and converting data
+# Subseting and converting data for Shiny
 
 For proper visualization of different variables (gender, time, day, age), we must subset our data.
 ```
