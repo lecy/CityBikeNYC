@@ -4,7 +4,7 @@ Independent Study
 
 Visualizing NYC Citi Bike trips
 
-# Introduction:
+# Introduction
 
 This study was inspired by the following projects:
 
@@ -61,15 +61,7 @@ library( shinythemes )
 library( eeptools )
 ```
 
-This is the example of basic analysis of data with dplyr:
-
-```
-[Link to html file](Bikes_Markdown.html)
-```
-
-The same live link:
-
-[Link to html file](Bikes_Markdown.html)
+This is the example of basic analysis of data with dplyr: [Basic analysis](Bikes_Markdown.html)
 
 
 Read initial bike dataset
@@ -86,15 +78,15 @@ More information about the structure of "dat" can be found here:
 https://github.com/lecy/CityBikeNYC/tree/master/DATA
 
 stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
-# Use this code for explanation https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R
 
-# Creating the list of routes and background map.
+Creating the list of routes and background map.
 
 routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
 water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
 
 Detailed information about creating list of routes and the map can be found here. 
-# https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md
+https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R
+https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md
 
 
 # Subseting and converting data
