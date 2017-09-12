@@ -26,14 +26,14 @@ Two simultanious maps are created in order to have an opportunity to compare dat
 
 ### Source of data:
 
-This study analyses dataset from official [NYC Citi Bike website:](https://www.citibikenyc.com/system-data)
+This study analyses dataset from official [NYC Citi Bike website](https://www.citibikenyc.com/system-data)
 
 Due to techical limitations, only one month was analyzed - January 2015. 
 As a result, this study demonstrates results, based only on this specific month.
 It must be admitted that patterns of bike sharing probably are different for other months, 
 especially Summer ones. 
 
-Additional visualization of similar projects can be found on the [main page:](https://github.com/lecy/CityBikeNYC)
+Additional visualization of similar projects can be found on the [main page](https://github.com/lecy/CityBikeNYC)
 
 # Code
 
@@ -56,9 +56,9 @@ dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bi
 
 This folder contains usage statistics for one month of the NYC Citybike bike share system in January of 2015. It contains 285,552 unique trips from 44,073 users.
 
-The dataset is available on was downloaded from the [public repository:](https://s3.amazonaws.com/tripdata/index.html)
+The dataset is available on was downloaded from the [public repository](https://s3.amazonaws.com/tripdata/index.html)
 
-More information about the structure of "dat" can be [found here:](https://github.com/lecy/CityBikeNYC/tree/master/DATA)
+More information about the structure of "dat" can be [found here](https://github.com/lecy/CityBikeNYC/tree/master/DATA)
 
 This is the example of basic analysis of data with dplyr: [Basic analysis](Bikes_Markdown.html)
 
@@ -68,11 +68,15 @@ This is the example of basic analysis of data with dplyr: [Basic analysis](Bikes
 The following data was used:
 
 stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
+
 routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
+
 water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
 
 Detailed information about creating stations, the list of routes and the map can be found: 
+
 [Plotting practice](https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R)
+
 [Recipe to map all routes](https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md)
 
 
