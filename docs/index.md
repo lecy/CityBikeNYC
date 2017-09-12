@@ -10,41 +10,30 @@ This study was inspired by the following projects:
 
 [A Tale of Twenty-Two Million Citi Bike Rides: Analyzing the NYC Bike Share System (by Todd Schneider)](http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/)
 
-Bike sharing usage in Hamburg (by Alex Kruse)
+[Bike sharing usage in Hamburg (by Alex Kruse)](https://alexkruse.shinyapps.io/stadtrad/)
 
-https://alexkruse.shinyapps.io/stadtrad/
+[Great Maps with ggplot2 (by Dr James Cheshire)](http://spatial.ly/2012/02/great-maps-ggplot2/)
 
-Great Maps with ggplot2 (by Dr James Cheshire)
+[Visualizing running routes in Amsterdam (by Nadieh Bremer)](https://www.visualcinnamon.com/2014/03/running-paths-in-amsterdam-step-2.htm)l
 
-http://spatial.ly/2012/02/great-maps-ggplot2/
-
-Visualizing running routes in Amsterdam (by Nadieh Bremer)
-
-https://www.visualcinnamon.com/2014/03/running-paths-in-amsterdam-step-2.html
-
-Visualizing Bike Sharing Networks
-
-http://ramnathv.github.io/bikeshare/ 
+[Visualizing Bike Sharing Networks](http://ramnathv.github.io/bikeshare/)
 
 The goal of this study is to visualize bike patterns of NYC Citi Bike sharing. Analyzing various patterns 
 may help urban policymakers to understand certain problems of using bikes based on time, gender, and
 location. As a result, these problems might be solved more effectively, using data driven decisions.
 
-Two simultanious maps are created in order to have an opportunity to 
+Two simultanious maps are created in order to have an opportunity to compare data.
 
-Source of data:
+### Source of data:
 
-This study analyses dataset from official NYC Citi Bike website: 
-
-https://www.citibikenyc.com/system-data
+This study analyses dataset from official [NYC Citi Bike website:](https://www.citibikenyc.com/system-data)
 
 Due to techical limitations, only one month was analyzed - January 2015. 
 As a result, this study demonstrates results, based only on this specific month.
 It must be admitted that patterns of bike sharing probably are different for other months, 
 especially Summer ones. 
 
-Additional visualization of similar projects can be found on the main page: 
-https://github.com/lecy/CityBikeNYC
+Additional visualization of similar projects can be found on the [main page:](https://github.com/lecy/CityBikeNYC)
 
 # Code
 
@@ -67,11 +56,9 @@ dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bi
 
 This folder contains usage statistics for one month of the NYC Citybike bike share system in January of 2015. It contains 285,552 unique trips from 44,073 users.
 
-The dataset is available on was downloaded from the public repository: https://s3.amazonaws.com/tripdata/index.html
+The dataset is available on was downloaded from the [public repository:](https://s3.amazonaws.com/tripdata/index.html)
 
-More information about the structure of "dat" can be found here:
-
-https://github.com/lecy/CityBikeNYC/tree/master/DATA
+More information about the structure of "dat" can be [found here:](https://github.com/lecy/CityBikeNYC/tree/master/DATA)
 
 This is the example of basic analysis of data with dplyr: [Basic analysis](Bikes_Markdown.html)
 
@@ -84,9 +71,9 @@ stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DA
 routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
 water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
 
-Detailed information about creating stations, the list of routes and the map can be found here. 
-https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R
-https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md
+Detailed information about creating stations, the list of routes and the map can be found: 
+[Plotting practice](https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R)
+[Recipe to map all routes](https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md)
 
 
 # Subseting and converting data for Shiny
