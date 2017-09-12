@@ -48,6 +48,8 @@ especially Summer ones.
 Additional visualization of similar projects can be found on the main page: 
 https://github.com/lecy/CityBikeNYC
 
+# Code
+
 ```
 Required packages:
 library( geojsonio )
@@ -75,19 +77,27 @@ Read initial bike dataset
 ```
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
 ```
+This folder contains usage statistics for one month of the NYC Citybike bike share system in January of 2015. It contains 285,552 unique trips from 44,073 users.
 
-#------------------------------------------------
-# Explain additionally creation of these files!!!
+The dataset is available on was downloaded from the public repository: https://s3.amazonaws.com/tripdata/index.html
+
+More information about the structure of "dat" can be found here:
+
+https://github.com/lecy/CityBikeNYC/tree/master/DATA
+
 stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
 # Use this code for explanation https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R
-routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
-# https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md
-water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
-# Use this code for explanation
-# https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md
-#------------------------------------------------
 
-Subseting and converting data
+# Creating the list of routes and background map.
+
+routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
+water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
+
+Detailed information about creating list of routes and the map can be found here. 
+# https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md
+
+
+# Subseting and converting data
 
 For proper visualization of different variables (gender, time, day, age), we must subset our data.
 ```
