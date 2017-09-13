@@ -237,8 +237,8 @@ Function Plot trips allows us to visualize both maps
 ```
 plotTrips( bike.trips=dat.sub1, max.trip.num=max.trips )
 title( main=toupper(paste(input$day1,selected.gender1,input$age1,input$time1,
-sep=" : ")), line=-3, 
-cex.main=1, col.main="white" )
+sep=" : ")), line=-3, cex.main=1, col.main="white" )
+
 plotTrips( bike.trips=dat.sub2, max.trip.num=max.trips )
 title( main=toupper(paste(input$day2,selected.gender2,input$age2,input$time2,
 sep=" : ")), line=-3, 
