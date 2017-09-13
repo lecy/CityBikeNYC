@@ -71,7 +71,8 @@ readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTE
 ```
 ```
 water <- 
-geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
+geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", 
+what="sp" )
 ```
 
 Detailed information about creating stations, the list of routes and the map can be found: 
@@ -176,7 +177,8 @@ if( add.water )
 
 ```
 water <- 
-geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
+geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", 
+what="sp" )
     
 plot( water, col="slategrey", border=NA, add=T )
  }
