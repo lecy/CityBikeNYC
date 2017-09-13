@@ -66,10 +66,12 @@ The following data was used:
 stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
 ```
 ```
-routes.list <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
+routes.list <- 
+readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
 ```
 ```
-water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
+water <- 
+geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
 ```
 
 Detailed information about creating stations, the list of routes and the map can be found: 
@@ -84,7 +86,7 @@ Detailed information about creating stations, the list of routes and the map can
 For proper visualization of different variables (gender, time, day, age), we must subset our data.
 For date we use lubridate package and starttime column, transforming it into year-month-day formatю
 ```
-bike.date <- strptime( dat$starttime, format = "%m/%d/%Y" ) # as a result, "2015-01-01 EST" returned. 
+bike.date <- strptime( dat$starttime, format = "%m/%d/%Y" )  
 ```
 Then, using function weekdays, we create "day.of.week", converting dates into days of a week. 
 ```
@@ -117,9 +119,10 @@ hours <- as.numeric( as.character( hours ))# transform
 ```
 Creating names labels for different time periods
 ```
-commute.categories <- c("Middle of Night: 12am-5am", "Morning Exercise: 5am-7am", "Morning Commute: 7am-10am", 
-                        "Lunch Ride: 10am-2pm","Afternoon Break: 2pm-4pm","Afternoon Commute: 4pm-7pm", 
-                        "After Dinner Commute: 7pm-10pm","Late Night Commute: 10pm-12am" )
+commute.categories <- c("Middle of Night: 12am-5am", "Morning Exercise: 5am-7am", 
+                      "Morning Commute: 7am-10am", "Lunch Ride: 10am-2pm",
+                       "Afternoon Break: 2pm-4pm","Afternoon Commute: 4pm-7pm", 
+                       "After Dinner Commute: 7pm-10pm","Late Night Commute: 10pm-12am" )
 ```
 Again using cut() we actually "match" hours and time periods 
 ```
@@ -145,52 +148,51 @@ plotTrips <- function( bike.trips, max.trip.num, add.water=T,
 ```
 trip count creates a dataframe a list of routes with their IDs 
 ```
-  trip.count <- as.data.frame( table( bike.trips$route.id ) )  
+trip.count <- as.data.frame( table( bike.trips$route.id ) )  
 max.trips <- max( trip.count$Freq )
 max.trips <- max( table( bike.trips$route.id, bike.trips$day.of.week ) )
 ```
 Specifying the thickness of the bike ride line
 ```
-  trip.weight <- line.weight * ( trip.count$Freq / max.trip.num )
+trip.weight <- line.weight * ( trip.count$Freq / max.trip.num )
 ```
 Specify geolocation coordinates
 ```
-  max.lat <- 40.77152
-  max.lon <- -73.95005
-  min.lat <- 40.68034
-  min.lon <- -74.01713
+max.lat <- 40.77152
+max.lon <- -73.95005
+min.lat <- 40.68034
+min.lon <- -74.01713
 ```
 Specifiying limits  
 ```
-  dev.new()
-  par( mar=c(0,0,0,0), bg=background.color )
-  plot.new( )
-  plot.window( xlim=c(min.lon,max.lon), ylim=c(min.lat,max.lat) )
+dev.new()
+par( mar=c(0,0,0,0), bg=background.color )
+plot.new( )
+plot.window( xlim=c(min.lon,max.lon), ylim=c(min.lat,max.lat) )
   
-  if( add.water )
+if( add.water )
   {
 ```
+
 ```
-library( geojsonio )
-```
-```
-water <- geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
+water <- 
+geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", what="sp" )
     
-    plot( water, col="slategrey", border=NA, add=T )
-  }
+plot( water, col="slategrey", border=NA, add=T )
+ }
 ```  
 Visualize routes from the route list, matching t=it long and lat and regulating thickness of the line 
 ```
-  for( i in 1:nrow( trip.count ) )
+for( i in 1:nrow( trip.count ) )
   {
-    single.route <- routes.list[[ trip.count$Var1[i] ]]
-    lines( single.route$lon, single.route$lat, col="gray", lwd=trip.weight[i] )
+single.route <- routes.list[[ trip.count$Var1[i] ]]
+lines( single.route$lon, single.route$lat, col="gray", lwd=trip.weight[i] )
     
   }
 ```
 Visualising bike station, based on long/lat and coloring it 
 ```
-  points( stations$LON, stations$LAT, col="darkorange", pch=19, cex=station.size )
+points( stations$LON, stations$LAT, col="darkorange", pch=19, cex=station.size )
   
 }
 ```
@@ -206,37 +208,37 @@ This function will contain input and output, which is a specific feature for Shi
 my.server <- function(input, output) 
 {
   
-  output$tripPlot <- renderPlot({  
+output$tripPlot <- renderPlot({  
 ``` 
 We subset data in order to be able to use differen variables and pick any combination of gender, age, time, and day of week. 
 ```
-    dat.sub1 <- dat[ dat$day.of.week == input$day1 & dat$gender == input$gender1 &
+dat.sub1 <- dat[ dat$day.of.week == input$day1 & dat$gender == input$gender1 &
                        dat$age == input$age1 & dat$time == input$time1 , ]
 ```
 We also do this for the second map   
 ```
-    dat.sub2 <- dat[ dat$day.of.week == input$day2 & dat$gender == input$gender2 &
+dat.sub2 <- dat[ dat$day.of.week == input$day2 & dat$gender == input$gender2 &
                        dat$age == input$age2 & dat$time == input$time2 , ]
     
-    max.trips <- max( c( table( dat.sub1$route.id ), table( dat.sub2$route.id ) ) )
+max.trips <- max( c( table( dat.sub1$route.id ), table( dat.sub2$route.id ) ) )
 ```   
 Similarly we subset data for gender  
 ```
-    selected.gender1 <- ifelse( input$gender1 == 1, "Male", "Female" )
-    selected.gender2 <- ifelse( input$gender2 == 1, "Male", "Female" )
+selected.gender1 <- ifelse( input$gender1 == 1, "Male", "Female" )
+selected.gender2 <- ifelse( input$gender2 == 1, "Male", "Female" )
 ```
 Create a map with two columns
 ```
-    par( mfrow=c(1,2) )
-```
+par( mfrow=c(1,2) )
 ```
 Function Plot trips allows us to visualize bot maps
-    plotTrips( bike.trips=dat.sub1, max.trip.num=max.trips )
-    title( main=toupper(paste(input$day1,selected.gender1,input$age1,input$time1,sep=" : ")), line=-3, cex.main=1, col.main="white" )
-    plotTrips( bike.trips=dat.sub2, max.trip.num=max.trips )
-    title( main=toupper(paste(input$day2,selected.gender2,input$age2,input$time2,sep=" : ")), line=-3, cex.main=1, col.main="white" )
+```
+plotTrips( bike.trips=dat.sub1, max.trip.num=max.trips )
+title( main=toupper(paste(input$day1,selected.gender1,input$age1,input$time1,sep=" : ")), line=-3, cex.main=1, col.main="white" )
+plotTrips( bike.trips=dat.sub2, max.trip.num=max.trips )
+title( main=toupper(paste(input$day2,selected.gender2,input$age2,input$time2,sep=" : ")), line=-3, cex.main=1, col.main="white" )
     
-  },   height = 800, width = 800 )  # 
+},   height = 800, width = 800 ) 
   
 }
 ```
@@ -249,18 +251,16 @@ my.ui <- fluidPage(
 ```  
 Pick appropriate there; for example,
 ```
-  theme = shinytheme("slate"),
+theme = shinytheme("slate"),
 ``` 
 Application title
 ```
-  titlePanel("Citi Bike NYC Route Traffic"),
+titlePanel("Citi Bike NYC Route Traffic"),
 ```  
 Sidebar with a slider input for the number of bins
 ```
-  sidebarLayout(
-    
+sidebarLayout(
     sidebarPanel(
-      
       h2( helpText("First Map") ), 
 ```     
 create inputs for the first map
