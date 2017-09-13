@@ -5,13 +5,14 @@
 This study was inspired by the following projects:
 
 [A Tale of Twenty-Two Million Citi Bike Rides: Analyzing the NYC Bike Share System (by Todd Schneider)](http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/)
+
 ![](https://github.com/lecy/CityBikeNYC/raw/master/ASSETS/most_popular_bike_routes.png)
 
 [Bike sharing usage in Hamburg (by Alex Kruse)](https://alexkruse.shinyapps.io/stadtrad/)
 
 [Great Maps with ggplot2 (by Dr James Cheshire)](http://spatial.ly/2012/02/great-maps-ggplot2/)
 
-[Visualizing running routes in Amsterdam (by Nadieh Bremer)](https://www.visualcinnamon.com/2014/03/running-paths-in-amsterdam-step-2.htm)l
+[Visualizing running routes in Amsterdam (by Nadieh Bremer)](https://www.visualcinnamon.com/2014/03/running-paths-in-amsterdam-step-2.htm)
 
 [Visualizing Bike Sharing Networks](http://ramnathv.github.io/bikeshare/)
 
@@ -36,6 +37,7 @@ Additional visualization of similar projects can be found on the [main page](htt
 
 # Preparing and reading the inital dataset
 
+The following packages should be installed
 ```
 Required packages:
 library( geojsonio )
@@ -46,6 +48,7 @@ library( shiny )
 library( shinythemes )
 library( eeptools )
 ```
+Read initial dataset
 ```
 dat <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/bikes.rds")))
 ```
@@ -60,23 +63,27 @@ This is the example of basic analysis of data with dplyr: [Basic analysis](Bikes
 
 
 # Creating the list of routes and background map.
+Key elements of the app are bike stations, the list of routes, and the map. 
 
 The following data was used:
 
+Bike stations demonstrate which geolocation of bike stations on the map and and create a background for buiding bike routes between them. 
 ```
 stations <- readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/STATIONS.rds")))
 ```
+The list of bike routes shows which routes are used by bikers, the length of such routes and the frequency of its using. 
 ```
 routes.list <- 
 readRDS(gzcon(url("https://github.com/lecy/CityBikeNYC/raw/master/DATA/ALL_ROUTES_LIST.rds")))
 ```
+geojson file helps to build a background map for the app. 
 ```
 water <- 
 geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", 
 what="sp" )
 ```
 
-Detailed information about creating stations, the list of routes and the map can be found: 
+More detailed information about creating stations, the list of routes and the map can be found: 
 
 [Plotting practice](https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R)
 
@@ -86,7 +93,7 @@ Detailed information about creating stations, the list of routes and the map can
 # Subseting and converting data for Shiny
 
 For proper visualization of different variables (gender, time, day, age), we must subset our data.
-For date we use lubridate package and starttime column, transforming it into year-month-day formatю
+For date we use "lubridate" package and starttime column, transforming it into year-month-day format.
 ```
 bike.date <- strptime( dat$starttime, format = "%m/%d/%Y" )  
 ```
@@ -133,7 +140,8 @@ table( dat$time )
 ```
 
 # Creating Shiny app
-Any Shiny app consists of three parts - global, server, and user interface (ui). 
+Any Shiny app consists of three mandatory elements - global, server, and user interface (ui). 
+More information about these elements is [here](https://shiny.rstudio.com/articles/scoping.html)
 
 # GLOBAL
 
@@ -175,7 +183,7 @@ plot.window( xlim=c(min.lon,max.lon), ylim=c(min.lat,max.lat) )
 if( add.water )
   {
 ```
-
+Read geojson file
 ```
 water <- 
 geojson_read( "https://raw.githubusercontent.com/lecy/CityBikeNYC/master/DATA/nyc_water.geojson", 
