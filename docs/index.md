@@ -233,6 +233,7 @@ Create a map with two columns
 ```
 par( mfrow=c(1,2) )
 ```
+
 Function Plot trips allows us to visualize both maps
 ```
 plotTrips( bike.trips=dat.sub1, max.trip.num=max.trips )
