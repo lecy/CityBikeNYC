@@ -5,6 +5,7 @@
 This study was inspired by the following projects:
 
 [A Tale of Twenty-Two Million Citi Bike Rides: Analyzing the NYC Bike Share System (by Todd Schneider)](http://toddwschneider.com/posts/a-tale-of-twenty-two-million-citi-bikes-analyzing-the-nyc-bike-share-system/)
+![](https://github.com/lecy/CityBikeNYC/raw/master/ASSETS/most_popular_bike_routes.png)
 
 [Bike sharing usage in Hamburg (by Alex Kruse)](https://alexkruse.shinyapps.io/stadtrad/)
 
