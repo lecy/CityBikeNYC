@@ -87,7 +87,7 @@ More detailed information about creating stations, the list of routes and the ma
 
 [Plotting practice](https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/PlottingPractice.R)
 
-[Recipe to map all routes](https://github.com/lecy/CityBikeNYC/blob/master/SANDBOX/Recipe_To_Map_All_Routes.md)
+[Recipe to map all routes](https://lecy.github.io/CityBikeNYC/SANDBOX/Recipe_To_Map_All_Routes.html)
 
 
 # Subseting and converting data for Shiny
